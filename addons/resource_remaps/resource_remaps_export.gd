@@ -7,9 +7,11 @@ var remap_resource: Dictionary
 var remap_scene: Dictionary
 var remap_file: Dictionary
 
-# Commented out to work around godot issue #90364
-#func _get_name() -> String:
-	#return "Resource Remaps Export Plugin"
+func _get_name() -> String:
+	# Name must start with a capital letter earlier than G to work around Godot issue #90364 / 93487
+	# This ensures that GDScript files will be passed to _export_file before they are changed to
+	# .gdc files.
+	return "A Resource Remaps Export Plugin"
 
 func _get_customization_configuration_hash() -> int:
 	return randi() # TODO: This is definitely the wrong way to do this...
@@ -130,14 +132,3 @@ func _export_file(path: String, _type: String, features: PackedStringArray) -> v
 				print("[Resource Remap] Skipping file because it has been remapped: ", path)
 				skip()
 				return
-
-	## This is just some test code to see what happens when the "base"
-	## file path is skipped instead of the remapped file path for
-	## CompressedTexture2D. The result is: it crashes.
-	#if type == "CompressedTexture2D" && remap_resource.has(path):
-		#var feature_to_new_path: Dictionary = remap_resource[path]
-		#for feature: String in feature_to_new_path.keys():
-			#if features.has(feature):
-				#print("[Resource Remap] Skipping resource because it has been remapped: ", path)
-				#skip() # skip the root in this case, instead of the new_path
-				#return
