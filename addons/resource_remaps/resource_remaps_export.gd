@@ -93,6 +93,15 @@ func _export_file(path: String, _type: String, features: PackedStringArray) -> v
 				add_file(path, FileAccess.get_file_as_bytes(new_path as String), true)
 				break
 
+	if (remap_resource.has(path)
+		|| remap_scene.has(path)
+		|| remap_file.has(path)):
+		# Do not skip this path, even if it is listed as a new path to remap to.
+		# An example of this would be "vr" feature using the default resource as
+		# a top-priority override and also having a different resource as the
+		# "mobile" feature lower-priority override.
+		return
+
 	# Workaround to Godot issue #94045: Don't skip textures that have been remapped to another
 	if _type == "CompressedTexture2D":
 		for feature_arrays: Array in remap_resource.values():
