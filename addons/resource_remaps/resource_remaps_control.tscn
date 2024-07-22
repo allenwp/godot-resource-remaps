@@ -1,15 +1,64 @@
-[gd_scene format=3 uid="uid://bbdmsiy2xbtbh"]
+[gd_scene load_steps=2 format=3 uid="uid://bbdmsiy2xbtbh"]
 
-[node name="Resource Remaps" type="Control"]
-layout_mode = 3
+[ext_resource type="Script" path="res://addons/resource_remaps/resource_remap_options.gd" id="1_akfbc"]
+
+[node name="Resource Remaps" type="VBoxContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+metadata/Notes = "This control is basically a copy of LocalizationEditor::LocalizationEditor()"
 
-[node name="Label" type="Label" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
-text = "Resource remaps"
+[node name="thb" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="l" type="Label" parent="thb"]
+layout_mode = 2
+theme_type_variation = &"HeaderSmall"
+text = "Resources:"
+
+[node name="spacer" type="Control" parent="thb"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 1
+
+[node name="addtr" type="Button" parent="thb"]
+layout_mode = 2
+text = "Add..."
+
+[node name="tmc" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="resource_remap" type="Tree" parent="tmc"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="thb2" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="l" type="Label" parent="thb2"]
+layout_mode = 2
+theme_type_variation = &"HeaderSmall"
+text = "Remaps by Feature:"
+
+[node name="spacer" type="Control" parent="thb2"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 1
+
+[node name="addtr" type="Button" parent="thb2"]
+layout_mode = 2
+text = "Add..."
+
+[node name="tmc2" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="resource_remap_options" type="Tree" parent="tmc2"]
+layout_mode = 2
+size_flags_vertical = 3
+columns = 2
+column_titles_visible = true
+script = ExtResource("1_akfbc")
