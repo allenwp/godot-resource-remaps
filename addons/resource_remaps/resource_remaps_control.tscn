@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://bbdmsiy2xbtbh"]
+[gd_scene load_steps=3 format=3 uid="uid://bbdmsiy2xbtbh"]
 
 [ext_resource type="Script" path="res://addons/resource_remaps/resource_remap_options.gd" id="1_akfbc"]
+[ext_resource type="Script" path="res://addons/resource_remaps/resource_remap.gd" id="1_owwd1"]
 
 [node name="Resource Remaps" type="VBoxContainer"]
 anchors_preset = 15
@@ -34,6 +35,8 @@ size_flags_vertical = 3
 [node name="resource_remap" type="Tree" parent="tmc"]
 layout_mode = 2
 size_flags_vertical = 3
+hide_root = true
+script = ExtResource("1_owwd1")
 
 [node name="thb2" type="HBoxContainer" parent="."]
 layout_mode = 2
@@ -61,4 +64,5 @@ layout_mode = 2
 size_flags_vertical = 3
 columns = 2
 column_titles_visible = true
+hide_root = true
 script = ExtResource("1_akfbc")
