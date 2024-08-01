@@ -1,5 +1,5 @@
 @tool
-extends EditorExportPlugin
+class_name ResourceRemapPlugin extends EditorExportPlugin
 
 var _features: PackedStringArray
 
@@ -7,20 +7,7 @@ var remap_resource: Dictionary
 var remap_scene: Dictionary
 var remap_file: Dictionary
 
-func _get_name() -> String:
-	# Name must start with a capital letter earlier than G to work around Godot issue #90364 / 93487
-	# This ensures that GDScript files will be passed to _export_file before they are changed to
-	# .gdc files.
-	return "A Resource Remaps Export Plugin"
-
-func _get_customization_configuration_hash() -> int:
-	return randi() # TODO: This is definitely the wrong way to do this...
-
-func _export_begin(features: PackedStringArray, _is_debug: bool, _path: String, _flags: int) -> void:
-	print("[Resource Remap] Remapping resources...")
-
-	_features = features
-
+func _init() -> void:
 	# Temporary while I figure out the GUI for this:
 	remap_resource = {
 		"res://icon-default.svg": [
@@ -45,6 +32,20 @@ func _export_begin(features: PackedStringArray, _is_debug: bool, _path: String, 
 			["mobile", "res://mobile.ogv"],
 		]
 	}
+
+func _get_name() -> String:
+	# Name must start with a capital letter earlier than G to work around Godot issue #90364 / 93487
+	# This ensures that GDScript files will be passed to _export_file before they are changed to
+	# .gdc files.
+	return "A Resource Remaps Export Plugin"
+
+func _get_customization_configuration_hash() -> int:
+	return randi() # TODO: This is definitely the wrong way to do this...
+
+func _export_begin(features: PackedStringArray, _is_debug: bool, _path: String, _flags: int) -> void:
+	print("[Resource Remap] Remapping resources...")
+
+	_features = features
 
 func _begin_customize_resources (_platform: EditorExportPlatform, _f: PackedStringArray) -> bool:
 	return true

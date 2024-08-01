@@ -9,6 +9,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_owwd1")
 metadata/Notes = "This control is basically a copy of LocalizationEditor::LocalizationEditor()"
 
 [node name="thb" type="HBoxContainer" parent="."]
@@ -24,7 +25,8 @@ layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 1
 
-[node name="addtr" type="Button" parent="thb"]
+[node name="res_remap_add_button" type="Button" parent="thb"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Add..."
 
@@ -33,10 +35,10 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="resource_remap" type="Tree" parent="tmc"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 hide_root = true
-script = ExtResource("1_owwd1")
 
 [node name="thb2" type="HBoxContainer" parent="."]
 layout_mode = 2
@@ -51,7 +53,8 @@ layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 1
 
-[node name="addtr" type="Button" parent="thb2"]
+[node name="res_remap_option_add_button" type="Button" parent="thb2"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Add..."
 
@@ -60,6 +63,7 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="resource_remap_options" type="Tree" parent="tmc2"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 columns = 2
