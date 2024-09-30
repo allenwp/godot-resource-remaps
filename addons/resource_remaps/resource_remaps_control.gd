@@ -46,6 +46,7 @@ func _res_remap_add(p_paths: PackedStringArray) -> void:
 	undo_redo.add_do_method(update_res_remaps)
 	undo_redo.add_undo_method(update_res_remaps)
 	undo_redo.commit_action()
+	ProjectSettings.save()
 
 func _res_remap_option_file_open() -> void:
 	res_remap_option_file_open_dialog.popup_file_dialog()
@@ -76,6 +77,7 @@ func _res_remap_option_add(p_paths: PackedStringArray) -> void:
 	undo_redo.add_do_method(update_res_remaps)
 	undo_redo.add_undo_method(update_res_remaps)
 	undo_redo.commit_action()
+	ProjectSettings.save()
 
 func _res_remap_select() -> void:
 	if updating_res_remaps:
@@ -135,6 +137,8 @@ func _res_remap_option_changed() -> void:
 	undo_redo.add_do_method(update_res_remaps)
 	undo_redo.add_undo_method(update_res_remaps)
 	undo_redo.commit_action()
+	ProjectSettings.save()
+
 	updating_res_remaps = false
 
 func _res_remap_delete(p_item: Object, p_column: int, p_button: int, p_mouse_button: int) -> void:
@@ -165,6 +169,7 @@ func _res_remap_delete(p_item: Object, p_column: int, p_button: int, p_mouse_but
 	#undo_redo.add_do_method(update_res_remaps)
 	#undo_redo.add_undo_method(update_res_remaps)
 	#undo_redo.commit_action()
+	ProjectSettings.save()
 
 func _res_remap_option_delete(p_item: Object, p_column: int, p_button: int, p_mouse_button: MouseButton) -> void:
 	if updating_res_remaps:
@@ -203,6 +208,7 @@ func _res_remap_option_delete(p_item: Object, p_column: int, p_button: int, p_mo
 	#undo_redo.add_do_method(update_res_remaps)
 	#undo_redo.add_undo_method(update_res_remaps)
 	#undo_redo.commit_action()
+	ProjectSettings.save()
 
 func connect_filesystem_dock_signals(p_fs_dock: FileSystemDock) -> void:
 	p_fs_dock.files_moved.connect(_filesystem_files_moved)
@@ -247,6 +253,7 @@ func _filesystem_files_moved(p_old_file: String, p_new_file: String) -> void:
 
 	if remaps_changed:
 		ProjectSettings.set_setting("resource_remaps", remaps)
+		ProjectSettings.save()
 		update_res_remaps()
 
 func _filesystem_file_removed(p_file: String) -> void:
