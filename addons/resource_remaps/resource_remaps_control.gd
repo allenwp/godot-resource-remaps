@@ -31,8 +31,8 @@ func _res_remap_add(p_paths: PackedStringArray) -> void:
 	var prev: Variant
 	var remaps: Dictionary
 
-	if ProjectSettings.has_setting("internationalization/locale/translation_remaps"):
-		remaps = ProjectSettings.get_setting("internationalization/locale/translation_remaps")
+	if ProjectSettings.has_setting("resource_remaps"):
+		remaps = ProjectSettings.get_setting("resource_remaps")
 		prev = remaps
 
 	for path in p_paths:
@@ -41,8 +41,8 @@ func _res_remap_add(p_paths: PackedStringArray) -> void:
 			remaps[path] = PackedStringArray()
 
 	undo_redo.create_action(TTR("Resource Remap: Add %d Path(s)") % p_paths.size())
-	undo_redo.add_do_property(ProjectSettings, "internationalization/locale/translation_remaps", remaps)
-	undo_redo.add_undo_property(ProjectSettings, "internationalization/locale/translation_remaps", prev)
+	undo_redo.add_do_property(ProjectSettings, "resource_remaps", remaps)
+	undo_redo.add_undo_property(ProjectSettings, "resource_remaps", prev)
 	undo_redo.add_do_method(update_res_remaps)
 	undo_redo.add_undo_method(update_res_remaps)
 	undo_redo.commit_action()
@@ -51,10 +51,10 @@ func _res_remap_option_file_open() -> void:
 	res_remap_option_file_open_dialog.popup_file_dialog()
 
 func _res_remap_option_add(p_paths: PackedStringArray) -> void:
-	if !ProjectSettings.has_setting("internationalization/locale/translation_remaps"):
+	if !ProjectSettings.has_setting("resource_remaps"):
 		return
 
-	var remaps: Dictionary = ProjectSettings.get_setting("internationalization/locale/translation_remaps")
+	var remaps: Dictionary = ProjectSettings.get_setting("resource_remaps")
 
 	var k: TreeItem = res_remap.get_selected()
 	if k == null:
@@ -71,8 +71,8 @@ func _res_remap_option_add(p_paths: PackedStringArray) -> void:
 	remaps[key] = r
 
 	undo_redo.create_action(TTR("Resource Remap: Add %d Remap(s)") % p_paths.size())
-	undo_redo.add_do_property(ProjectSettings, "internationalization/locale/translation_remaps", remaps)
-	undo_redo.add_undo_property(ProjectSettings, "internationalization/locale/translation_remaps", ProjectSettings.get_setting("internationalization/locale/translation_remaps"))
+	undo_redo.add_do_property(ProjectSettings, "resource_remaps", remaps)
+	undo_redo.add_undo_property(ProjectSettings, "resource_remaps", ProjectSettings.get_setting("resource_remaps"))
 	undo_redo.add_do_method(update_res_remaps)
 	undo_redo.add_undo_method(update_res_remaps)
 	undo_redo.commit_action()
@@ -104,10 +104,10 @@ func _res_remap_option_changed() -> void:
 	if updating_res_remaps:
 		return
 
-	if !ProjectSettings.has_setting("internationalization/locale/translation_remaps"):
+	if !ProjectSettings.has_setting("resource_remaps"):
 		return
 
-	var remaps: Dictionary = ProjectSettings.get_setting("internationalization/locale/translation_remaps")
+	var remaps: Dictionary = ProjectSettings.get_setting("resource_remaps")
 
 	var k: TreeItem = res_remap.get_selected()
 	if k == null:
@@ -130,8 +130,8 @@ func _res_remap_option_changed() -> void:
 	updating_res_remaps = true
 
 	undo_redo.create_action(TTR("Change Resource Remap Language"))
-	undo_redo.add_do_property(ProjectSettings, "internationalization/locale/translation_remaps", remaps)
-	undo_redo.add_undo_property(ProjectSettings, "internationalization/locale/translation_remaps", ProjectSettings.get_setting("internationalization/locale/translation_remaps"))
+	undo_redo.add_do_property(ProjectSettings, "resource_remaps", remaps)
+	undo_redo.add_undo_property(ProjectSettings, "resource_remaps", ProjectSettings.get_setting("resource_remaps"))
 	undo_redo.add_do_method(update_res_remaps)
 	undo_redo.add_undo_method(update_res_remaps)
 	undo_redo.commit_action()
@@ -145,10 +145,10 @@ func _res_remap_delete(p_item: Object, p_column: int, p_button: int, p_mouse_but
 	#if p_mouse_button != ButtonList.LEFT:
 		#return
 #
-	#if !ProjectSettings.has_setting("internationalization/locale/translation_remaps"):
+	#if !ProjectSettings.has_setting("resource_remaps"):
 		#return
 #
-	#var remaps: Dictionary = ProjectSettings.get_setting("internationalization/locale/translation_remaps")
+	#var remaps: Dictionary = ProjectSettings.get_setting("resource_remaps")
 	#var k: TreeItem = p_item as TreeItem
 	#if k == null:
 		#return
@@ -160,8 +160,8 @@ func _res_remap_delete(p_item: Object, p_column: int, p_button: int, p_mouse_but
 	#remaps.erase(key)
 #
 	#undo_redo.create_action(TTR("Remove Resource Remap"))
-	#undo_redo.add_do_property(ProjectSettings, "internationalization/locale/translation_remaps", remaps)
-	#undo_redo.add_undo_property(ProjectSettings, "internationalization/locale/translation_remaps", ProjectSettings.get_setting("internationalization/locale/translation_remaps"))
+	#undo_redo.add_do_property(ProjectSettings, "resource_remaps", remaps)
+	#undo_redo.add_undo_property(ProjectSettings, "resource_remaps", ProjectSettings.get_setting("resource_remaps"))
 	#undo_redo.add_do_method(update_res_remaps)
 	#undo_redo.add_undo_method(update_res_remaps)
 	#undo_redo.commit_action()
@@ -174,10 +174,10 @@ func _res_remap_option_delete(p_item: Object, p_column: int, p_button: int, p_mo
 	#if p_mouse_button != MouseButton.LEFT:
 		#return
 #
-	#if !ProjectSettings.has_setting("internationalization/locale/translation_remaps"):
+	#if !ProjectSettings.has_setting("resource_remaps"):
 		#return
 #
-	#var remaps: Dictionary = ProjectSettings.get_setting("internationalization/locale/translation_remaps")
+	#var remaps: Dictionary = ProjectSettings.get_setting("resource_remaps")
 #
 	#var k: TreeItem = res_remap.get_selected()
 	#if k == null:
@@ -198,8 +198,8 @@ func _res_remap_option_delete(p_item: Object, p_column: int, p_button: int, p_mo
 	#remaps[key] = r
 #
 	#undo_redo.create_action(TTR("Remove Resource Remap Option"))
-	#undo_redo.add_do_property(ProjectSettings, "internationalization/locale/translation_remaps", remaps)
-	#undo_redo.add_undo_property(ProjectSettings, "internationalization/locale/translation_remaps", ProjectSettings.get_setting("internationalization/locale/translation_remaps"))
+	#undo_redo.add_do_property(ProjectSettings, "resource_remaps", remaps)
+	#undo_redo.add_undo_property(ProjectSettings, "resource_remaps", ProjectSettings.get_setting("resource_remaps"))
 	#undo_redo.add_do_method(update_res_remaps)
 	#undo_redo.add_undo_method(update_res_remaps)
 	#undo_redo.commit_action()
@@ -212,8 +212,8 @@ func _filesystem_files_moved(p_old_file: String, p_new_file: String) -> void:
 	var remaps: Dictionary = {}
 	var remaps_changed: bool = false
 
-	if ProjectSettings.has_setting("internationalization/locale/translation_remaps"):
-		remaps = ProjectSettings.get_setting("internationalization/locale/translation_remaps")
+	if ProjectSettings.has_setting("resource_remaps"):
+		remaps = ProjectSettings.get_setting("resource_remaps")
 
 	# Check for the keys.
 	if remaps.has(p_old_file):
@@ -246,15 +246,15 @@ func _filesystem_files_moved(p_old_file: String, p_new_file: String) -> void:
 			remaps[remap_keys[i]] = remapped_files
 
 	if remaps_changed:
-		ProjectSettings.set_setting("internationalization/locale/translation_remaps", remaps)
+		ProjectSettings.set_setting("resource_remaps", remaps)
 		update_res_remaps()
 
 func _filesystem_file_removed(p_file: String) -> void:
 	# Check if the remaps are affected.
 	var remaps: Dictionary
 
-	if ProjectSettings.has_setting("internationalization/locale/translation_remaps"):
-		remaps = ProjectSettings.get_setting("internationalization/locale/translation_remaps")
+	if ProjectSettings.has_setting("resource_remaps"):
+		remaps = ProjectSettings.get_setting("resource_remaps")
 
 	var remaps_changed: bool = remaps.has(p_file)
 
@@ -296,8 +296,8 @@ func update_res_remaps() -> void:
 	res_remap_options.set_hide_root(true)
 	res_remap_option_add_button.disabled = true
 
-	if ProjectSettings.has_setting("internationalization/locale/translation_remaps"):
-		var remaps: Dictionary = ProjectSettings.get_setting("internationalization/locale/translation_remaps")
+	if ProjectSettings.has_setting("resource_remaps"):
+		var remaps: Dictionary = ProjectSettings.get_setting("resource_remaps")
 		var keys: Array = remaps.keys()
 		keys.sort()
 
