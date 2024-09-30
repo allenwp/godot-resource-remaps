@@ -9,7 +9,6 @@ var res_remap: Tree = null
 var res_remap_options: Tree = null
 
 var updating_res_remaps: bool = false
-var localization_changed: String = "localization_changed"
 
 var undo_redo: UndoRedo = UndoRedo.new()
 
@@ -46,8 +45,6 @@ func _res_remap_add(p_paths: PackedStringArray) -> void:
 	undo_redo.add_undo_property(ProjectSettings, "internationalization/locale/translation_remaps", prev)
 	undo_redo.add_do_method(update_res_remaps)
 	undo_redo.add_undo_method(update_res_remaps)
-	undo_redo.add_do_method(emit_localization_changed_signal)
-	undo_redo.add_undo_method(emit_localization_changed_signal)
 	undo_redo.commit_action()
 
 func _res_remap_option_file_open() -> void:
@@ -78,8 +75,6 @@ func _res_remap_option_add(p_paths: PackedStringArray) -> void:
 	undo_redo.add_undo_property(ProjectSettings, "internationalization/locale/translation_remaps", ProjectSettings.get_setting("internationalization/locale/translation_remaps"))
 	undo_redo.add_do_method(update_res_remaps)
 	undo_redo.add_undo_method(update_res_remaps)
-	undo_redo.add_do_method(emit_localization_changed_signal)
-	undo_redo.add_undo_method(emit_localization_changed_signal)
 	undo_redo.commit_action()
 
 func _res_remap_select() -> void:
@@ -139,8 +134,6 @@ func _res_remap_option_changed() -> void:
 	undo_redo.add_undo_property(ProjectSettings, "internationalization/locale/translation_remaps", ProjectSettings.get_setting("internationalization/locale/translation_remaps"))
 	undo_redo.add_do_method(update_res_remaps)
 	undo_redo.add_undo_method(update_res_remaps)
-	undo_redo.add_do_method(emit_localization_changed_signal)
-	undo_redo.add_undo_method(emit_localization_changed_signal)
 	undo_redo.commit_action()
 	updating_res_remaps = false
 
@@ -171,8 +164,6 @@ func _res_remap_delete(p_item: Object, p_column: int, p_button: int, p_mouse_but
 	#undo_redo.add_undo_property(ProjectSettings, "internationalization/locale/translation_remaps", ProjectSettings.get_setting("internationalization/locale/translation_remaps"))
 	#undo_redo.add_do_method(update_res_remaps)
 	#undo_redo.add_undo_method(update_res_remaps)
-	#undo_redo.add_do_method(emit_localization_changed_signal)
-	#undo_redo.add_undo_method(emit_localization_changed_signal)
 	#undo_redo.commit_action()
 
 func _res_remap_option_delete(p_item: Object, p_column: int, p_button: int, p_mouse_button: MouseButton) -> void:
@@ -211,8 +202,6 @@ func _res_remap_option_delete(p_item: Object, p_column: int, p_button: int, p_mo
 	#undo_redo.add_undo_property(ProjectSettings, "internationalization/locale/translation_remaps", ProjectSettings.get_setting("internationalization/locale/translation_remaps"))
 	#undo_redo.add_do_method(update_res_remaps)
 	#undo_redo.add_undo_method(update_res_remaps)
-	#undo_redo.add_do_method(emit_localization_changed_signal)
-	#undo_redo.add_undo_method(emit_localization_changed_signal)
 	#undo_redo.commit_action()
 
 func connect_filesystem_dock_signals(p_fs_dock: FileSystemDock) -> void:
@@ -259,7 +248,6 @@ func _filesystem_files_moved(p_old_file: String, p_new_file: String) -> void:
 	if remaps_changed:
 		ProjectSettings.set_setting("internationalization/locale/translation_remaps", remaps)
 		update_res_remaps()
-		emit_localization_changed_signal()
 
 func _filesystem_file_removed(p_file: String) -> void:
 	# Check if the remaps are affected.
@@ -288,7 +276,6 @@ func _filesystem_file_removed(p_file: String) -> void:
 
 	if remaps_changed:
 		update_res_remaps()
-		emit_localization_changed_signal()
 
 func update_res_remaps() -> void:
 	if updating_res_remaps:
@@ -438,5 +425,5 @@ func _init() -> void:
 	res_remap_option_file_open_dialog.files_selected.connect(_res_remap_option_add)
 	add_child(res_remap_option_file_open_dialog)
 
-func emit_localization_changed_signal() -> void:
-	emit_signal(localization_changed)
+func _ready() -> void:
+	update_res_remaps()
