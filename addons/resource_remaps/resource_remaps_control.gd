@@ -311,10 +311,9 @@ func update_res_remaps() -> void:
 			t.add_button(0, remove_icon, 0, false, TTR("Remove"))
 
 			# Display that it has been removed if this is the case.
-			#TODO
-			#if !FileAccess.exists(key):
-				#t.set_text(0, t.get_text(0) + " (" + TTR("Removed") + ")")
-				#t.set_tooltip_text(0, key + TTR(" cannot be found."))
+			if !FileAccess.file_exists(key):
+				t.set_text(0, t.get_text(0) + " (" + TTR("Removed") + ")")
+				t.set_tooltip_text(0, key + TTR(" cannot be found."))
 
 			if key == remap_selected:
 				t.select(0)
@@ -340,10 +339,9 @@ func update_res_remaps() -> void:
 					t2.set_tooltip_text(1, locale)
 #
 					## Display that it has been removed if this is the case.
-					# TODO:
-					#if !FileAccess.exists(path):
-						#t2.set_text(0, t2.get_text(0) + " (" + TTR("Removed") + ")")
-						# t2.set_tooltip_text(0, str([t2->get_tooltip_text(0), TTR(" cannot be found.")])
+					if !FileAccess.file_exists(path):
+						t2.set_text(0, str([t2.get_text(0), " (", TTR("Removed"), ")"]))
+						t2.set_tooltip_text(0, str([t2.get_tooltip_text(0), TTR(" cannot be found.")]))
 
 	updating_res_remaps = false
 
