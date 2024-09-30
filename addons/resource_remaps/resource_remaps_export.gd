@@ -104,14 +104,19 @@ func _export_file(path: String, _type: String, features: PackedStringArray) -> v
 		return
 
 	# Workaround to Godot issue #94045: Don't skip textures that have been remapped to another
-	if _type == "CompressedTexture2D":
+	if _type == "AtlasTexture" \
+		|| _type == "CompressedCubemap" \
+		|| _type == "CompressedCubemapArray" \
+		|| _type == "CompressedTexture2D" \
+		|| _type == "CompressedTexture2DArray" \
+		|| _type == "CompressedTexture3D":
 		for feature_arrays: Array in remap_resource.values():
 			for feature_array: Array in feature_arrays:
 				var feature: String = feature_array[0]
 				if _features.has(feature):
 					var new_path: String = feature_array[1]
 					if new_path == path:
-						print("[Resource Remap] NOT skipping CompressedTexture2D (.ctex file) because it's referenced by another resource. ", path)
+						print("[Resource Remap] NOT skipping %s because its imported file is referenced by another resource: %s" % [_type, path])
 						return
 					else:
 						# We've found the first valid feature mapping for this remap and it's not
