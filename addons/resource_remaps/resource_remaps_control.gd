@@ -11,6 +11,8 @@ var translation_remap_options: Tree = null
 var updating_translations: bool = false
 var localization_changed: String
 
+var undo_redo: UndoRedo = UndoRedo.new()
+
 func TTR(text: String) -> String:
 	# TODO: translate text.
 	return text
@@ -39,15 +41,13 @@ func _translation_res_add(p_paths: PackedStringArray) -> void:
 			# Don't overwrite with an empty remap array if an array already exists for the given path.
 			remaps[path] = PackedStringArray()
 
-	var undo_redo: UndoRedo = UndoRedo.new()
 	undo_redo.create_action(TTR("Translation Resource Remap: Add %d Path(s)") % p_paths.size())
 	undo_redo.add_do_property(ProjectSettings, "internationalization/locale/translation_remaps", remaps)
 	undo_redo.add_undo_property(ProjectSettings, "internationalization/locale/translation_remaps", prev)
-	# TODO:
-	#undo_redo.add_do_method(self, "update_translations")
-	#undo_redo.add_undo_method(self, "update_translations")
-	#undo_redo.add_do_method(self, "emit_signal", localization_changed)
-	#undo_redo.add_undo_method(self, "emit_signal", localization_changed)
+	undo_redo.add_do_method(update_translations)
+	undo_redo.add_undo_method(update_translations)
+	undo_redo.add_do_method(emit_localization_changed_signal)
+	undo_redo.add_undo_method(emit_localization_changed_signal)
 	undo_redo.commit_action()
 
 func _translation_res_option_file_open() -> void:
@@ -73,15 +73,13 @@ func _translation_res_option_add(p_paths: PackedStringArray) -> void:
 		r.append(path + ":en")
 	remaps[key] = r
 
-	var undo_redo: UndoRedo = UndoRedo.new()
 	undo_redo.create_action(TTR("Translation Resource Remap: Add %d Remap(s)") % p_paths.size())
 	undo_redo.add_do_property(ProjectSettings, "internationalization/locale/translation_remaps", remaps)
 	undo_redo.add_undo_property(ProjectSettings, "internationalization/locale/translation_remaps", ProjectSettings.get_setting("internationalization/locale/translation_remaps"))
-	# TODO:
-	#undo_redo.add_do_method(self, "update_translations")
-	#undo_redo.add_undo_method(self, "update_translations")
-	#undo_redo.add_do_method(self, "emit_signal", localization_changed)
-	#undo_redo.add_undo_method(self, "emit_signal", localization_changed)
+	undo_redo.add_do_method(update_translations)
+	undo_redo.add_undo_method(update_translations)
+	undo_redo.add_do_method(emit_localization_changed_signal)
+	undo_redo.add_undo_method(emit_localization_changed_signal)
 	undo_redo.commit_action()
 
 func _translation_res_select() -> void:
@@ -136,15 +134,13 @@ func _translation_res_option_changed() -> void:
 
 	updating_translations = true
 
-	var undo_redo: UndoRedo = UndoRedo.new()
 	undo_redo.create_action(TTR("Change Resource Remap Language"))
 	undo_redo.add_do_property(ProjectSettings, "internationalization/locale/translation_remaps", remaps)
 	undo_redo.add_undo_property(ProjectSettings, "internationalization/locale/translation_remaps", ProjectSettings.get_setting("internationalization/locale/translation_remaps"))
-	# TODO:
-	#undo_redo.add_do_method(self, "update_translations")
-	#undo_redo.add_undo_method(self, "update_translations")
-	#undo_redo.add_do_method(self, "emit_signal", localization_changed)
-	#undo_redo.add_undo_method(self, "emit_signal", localization_changed)
+	undo_redo.add_do_method(update_translations)
+	undo_redo.add_undo_method(update_translations)
+	undo_redo.add_do_method(emit_localization_changed_signal)
+	undo_redo.add_undo_method(emit_localization_changed_signal)
 	undo_redo.commit_action()
 	updating_translations = false
 
@@ -170,14 +166,13 @@ func _translation_res_delete(p_item: Object, p_column: int, p_button: int, p_mou
 #
 	#remaps.erase(key)
 #
-	#var undo_redo: UndoRedo = UndoRedo.get_singleton()
 	#undo_redo.create_action(TTR("Remove Resource Remap"))
 	#undo_redo.add_do_property(ProjectSettings, "internationalization/locale/translation_remaps", remaps)
 	#undo_redo.add_undo_property(ProjectSettings, "internationalization/locale/translation_remaps", ProjectSettings.get_setting("internationalization/locale/translation_remaps"))
-	#undo_redo.add_do_method(self, "update_translations")
-	#undo_redo.add_undo_method(self, "update_translations")
-	#undo_redo.add_do_method(self, "emit_signal", localization_changed)
-	#undo_redo.add_undo_method(self, "emit_signal", localization_changed)
+	#undo_redo.add_do_method(update_translations)
+	#undo_redo.add_undo_method(update_translations)
+	#undo_redo.add_do_method(emit_localization_changed_signal)
+	#undo_redo.add_undo_method(emit_localization_changed_signal)
 	#undo_redo.commit_action()
 
 func _translation_res_option_delete(p_item: Object, p_column: int, p_button: int, p_mouse_button: MouseButton) -> void:
@@ -211,19 +206,18 @@ func _translation_res_option_delete(p_item: Object, p_column: int, p_button: int
 	#r.remove_at(idx)
 	#remaps[key] = r
 #
-	#var undo_redo: UndoRedo = UndoRedo.get_singleton()
 	#undo_redo.create_action(TTR("Remove Resource Remap Option"))
 	#undo_redo.add_do_property(ProjectSettings, "internationalization/locale/translation_remaps", remaps)
 	#undo_redo.add_undo_property(ProjectSettings, "internationalization/locale/translation_remaps", ProjectSettings.get_setting("internationalization/locale/translation_remaps"))
-	#undo_redo.add_do_method(self, "update_translations")
-	#undo_redo.add_undo_method(self, "update_translations")
-	#undo_redo.add_do_method(self, "emit_signal", localization_changed)
-	#undo_redo.add_undo_method(self, "emit_signal", localization_changed)
+	#undo_redo.add_do_method(update_translations)
+	#undo_redo.add_undo_method(update_translations)
+	#undo_redo.add_do_method(emit_localization_changed_signal)
+	#undo_redo.add_undo_method(emit_localization_changed_signal)
 	#undo_redo.commit_action()
-#
-#func connect_filesystem_dock_signals(p_fs_dock: FileSystemDock) -> void:
-	#p_fs_dock.files_moved.connect(_filesystem_files_moved)
-	#p_fs_dock.file_removed.connect(_filesystem_file_removed)
+
+func connect_filesystem_dock_signals(p_fs_dock: FileSystemDock) -> void:
+	p_fs_dock.files_moved.connect(_filesystem_files_moved)
+	p_fs_dock.file_removed.connect(_filesystem_file_removed)
 
 func _filesystem_files_moved(p_old_file: String, p_new_file: String) -> void:
 	var remaps: Dictionary = {}
@@ -265,7 +259,7 @@ func _filesystem_files_moved(p_old_file: String, p_new_file: String) -> void:
 	if remaps_changed:
 		ProjectSettings.set_setting("internationalization/locale/translation_remaps", remaps)
 		update_translations()
-		emit_signal("localization_changed")
+		emit_localization_changed_signal()
 
 func _filesystem_file_removed(p_file: String) -> void:
 	# Check if the remaps are affected.
@@ -294,7 +288,7 @@ func _filesystem_file_removed(p_file: String) -> void:
 
 	if remaps_changed:
 		update_translations()
-		emit_signal("localization_changed")
+		emit_localization_changed_signal()
 
 func update_translations() -> void:
 	if updating_translations:
@@ -370,19 +364,20 @@ func _init() -> void:
 	name = TTR("Resource Remaps")
 	localization_changed = "localization_changed"
 
-	var translations: TabContainer = TabContainer.new()
-	translations.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	add_child(translations)
+	var container: MarginContainer = MarginContainer.new()
+	container.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	add_child(container)
 
 	var tvb: VBoxContainer = VBoxContainer.new()
 	tvb.name = TTR("Remaps")
-	translations.add_child(tvb)
+	container.add_child(tvb)
 
 	var thb: HBoxContainer = HBoxContainer.new()
 	var l: Label = Label.new()
 	l.text = TTR("Resources:")
 	l.theme_type_variation = "HeaderSmall"
 	thb.add_child(l)
+	thb.add_spacer(false)
 	tvb.add_child(thb)
 
 	var addtr: Button = Button.new()
@@ -443,3 +438,6 @@ func _init() -> void:
 	translation_res_option_file_open_dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILES
 	translation_res_option_file_open_dialog.files_selected.connect(_translation_res_option_add)
 	add_child(translation_res_option_file_open_dialog)
+
+func emit_localization_changed_signal() -> void:
+	emit_signal("localization_changed")
