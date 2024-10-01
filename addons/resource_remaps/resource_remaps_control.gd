@@ -124,8 +124,7 @@ func _res_remap_option_selected(p_locale: String) -> void:
 		#return
 #
 	#var key: String = k.get_metadata(0)
-	#var idx: int = ed.get_metadata(0)
-	#var path: String = ed.get_metadata(1)
+	#var feature: String = ed.get_metadata(0)
 	#var locale: String = ed.get_tooltip_text(1)
 #
 	#if !remaps.has(key):
@@ -150,69 +149,72 @@ func _res_remap_delete(p_item: Object, p_column: int, p_button: int, p_mouse_but
 	if updating_res_remaps:
 		return
 
-	#TODO:
-	#if p_mouse_button != ButtonList.LEFT:
-		#return
-#
-	#if !ProjectSettings.has_setting("resource_remaps"):
-		#return
-#
-	#var remaps: Dictionary = ProjectSettings.get_setting("resource_remaps")
-	#var k: TreeItem = p_item as TreeItem
-	#if k == null:
-		#return
-#
-	#var key: String = k.get_metadata(0)
-	#if !remaps.has(key):
-		#return
-#
-	#remaps.erase(key)
-#
-	#undo_redo.create_action(TTR("Remove Resource Remap"))
-	#undo_redo.add_do_property(ProjectSettings, "resource_remaps", remaps)
-	#undo_redo.add_undo_property(ProjectSettings, "resource_remaps", ProjectSettings.get_setting("resource_remaps"))
-	#undo_redo.add_do_method(update_res_remaps)
-	#undo_redo.add_undo_method(update_res_remaps)
-	#undo_redo.commit_action()
+	if p_mouse_button != MOUSE_BUTTON_LEFT:
+		return
+
+	if !ProjectSettings.has_setting("resource_remaps"):
+		return
+
+	var remaps: Dictionary = ProjectSettings.get_setting("resource_remaps")
+	var k: TreeItem = p_item as TreeItem
+	if k == null:
+		return
+
+	var key: String = k.get_metadata(0)
+	if !remaps.has(key):
+		return
+
+	remaps.erase(key)
+
+	undo_redo.create_action(TTR("Remove Resource Remap"))
+	undo_redo.add_do_property(ProjectSettings, "resource_remaps", remaps)
+	undo_redo.add_undo_property(ProjectSettings, "resource_remaps", ProjectSettings.get_setting("resource_remaps"))
+	undo_redo.add_do_method(update_res_remaps)
+	undo_redo.add_undo_method(update_res_remaps)
+	undo_redo.commit_action()
 	ProjectSettings.save()
 
 func _res_remap_option_delete(p_item: Object, p_column: int, p_button: int, p_mouse_button: MouseButton) -> void:
 	if updating_res_remaps:
 		return
 
-	#TODO:
-	#if p_mouse_button != MouseButton.LEFT:
-		#return
-#
-	#if !ProjectSettings.has_setting("resource_remaps"):
-		#return
-#
-	#var remaps: Dictionary = ProjectSettings.get_setting("resource_remaps")
-#
-	#var k: TreeItem = res_remap.get_selected()
-	#if k == null:
-		#return
-	#var ed: TreeItem = p_item as TreeItem
-	#if ed == null:
-		#return
-#
-	#var key: String = k.get_metadata(0)
-	#var idx: int = ed.get_metadata(0)
-#
-	#if !remaps.has(key):
-		#return
-	#var r: PackedStringArray = remaps[key]
-	#if idx >= r.size():
-		#return
-	#r.remove_at(idx)
-	#remaps[key] = r
-#
-	#undo_redo.create_action(TTR("Remove Resource Remap Option"))
-	#undo_redo.add_do_property(ProjectSettings, "resource_remaps", remaps)
-	#undo_redo.add_undo_property(ProjectSettings, "resource_remaps", ProjectSettings.get_setting("resource_remaps"))
-	#undo_redo.add_do_method(update_res_remaps)
-	#undo_redo.add_undo_method(update_res_remaps)
-	#undo_redo.commit_action()
+	if p_mouse_button != MOUSE_BUTTON_LEFT:
+		return
+
+	if !ProjectSettings.has_setting("resource_remaps"):
+		return
+
+	var remaps: Dictionary = ProjectSettings.get_setting("resource_remaps")
+
+	var k: TreeItem = res_remap.get_selected()
+	if k == null:
+		return
+	var ed: TreeItem = p_item as TreeItem
+	if ed == null:
+		return
+
+	var key: String = k.get_metadata(0)
+	var feature: String = ed.get_metadata(0)
+
+	if !remaps.has(key):
+		return
+	var r: Array[PackedStringArray] = remaps[key]
+	var idx: int = -1
+	for i in range(r.size()):
+		if r[i][0] == feature:
+			idx = i
+			break
+	if idx < 0:
+		return
+	r.remove_at(idx)
+	remaps[key] = r
+
+	undo_redo.create_action(TTR("Remove Resource Remap Option"))
+	undo_redo.add_do_property(ProjectSettings, "resource_remaps", remaps)
+	undo_redo.add_undo_property(ProjectSettings, "resource_remaps", ProjectSettings.get_setting("resource_remaps"))
+	undo_redo.add_do_method(update_res_remaps)
+	undo_redo.add_undo_method(update_res_remaps)
+	undo_redo.commit_action()
 	ProjectSettings.save()
 
 func connect_filesystem_dock_signals(p_fs_dock: FileSystemDock) -> void:
@@ -340,12 +342,11 @@ func update_res_remaps() -> void:
 					t2.set_editable(0, false)
 					t2.set_text(0, path.replace("res://", ""))
 					t2.set_tooltip_text(0, path)
-					t2.set_metadata(0, j)
+					t2.set_metadata(0, feature)
 					t2.add_button(0, remove_icon, 0, false, TTR("Remove"))
 					t2.set_cell_mode(1, TreeItem.CELL_MODE_CUSTOM)
 					t2.set_text(1, feature)
 					t2.set_editable(1, true)
-					t2.set_metadata(1, path)
 					t2.set_tooltip_text(1, feature)
 #
 					## Display that it has been removed if this is the case.
