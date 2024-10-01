@@ -2,9 +2,9 @@
 class_name ResourceRemapPlugin extends EditorExportPlugin
 
 var _features: PackedStringArray
+var _resource_extensions: PackedStringArray = ResourceLoader.get_recognized_extensions_for_type("Resource")
 
 var remap_resource: Dictionary
-var remap_file: Dictionary
 
 func _init() -> void:
 	# Temporary while I figure out the GUI for this:
@@ -23,17 +23,18 @@ func _init() -> void:
 			["ios", "res://ios.tscn"],
 			["mobile", "res://mobile.tscn"],
 		],
-	}
-	remap_file = {
 		"res://default.ogv": [
 			["mobile", "res://mobile.ogv"],
-		]
+		],
 	}
 
 func _get_name() -> String:
 	# Name must start with a capital letter earlier than G to work around Godot issue #90364 / 93487
 	# This ensures that GDScript files will be passed to _export_file before they are changed to
 	# .gdc files.
+	#
+	# This can be changed to a later letter in the alphabet to allow for customization of resources
+	# in a different EditorExportPlugin before they are remapped by this plugin(??)
 	return "A Resource Remaps Export Plugin"
 
 func _get_customization_configuration_hash() -> int:
@@ -44,18 +45,25 @@ func _export_begin(features: PackedStringArray, _is_debug: bool, _path: String, 
 	_features = features
 
 func _export_file(path: String, _type: String, features: PackedStringArray) -> void:
-	if remap_file.has(path):
-		var feature_arrays: Array = remap_file[path]
-		for feature_array: Array in feature_arrays:
-			var feature: String = feature_array[0]
-			if features.has(feature):
-				var new_path: String = feature_array[1]
-				print("[Resource Remap] File: ", path, " to: ", new_path)
-				add_file(path, FileAccess.get_file_as_bytes(new_path as String), true)
+	if remap_resource.has(path):
+		var is_resource_type: bool = false
+		var this_extension:String = path.get_extension()
+		for res_extension: String in _resource_extensions:
+			if this_extension.nocasecmp_to(res_extension) == 0:
+				#print_debug("[Resource Remap Debug] Extension " + this_extension + " matches known resource extension " + res_extension + " for path " + path)
+				is_resource_type = true # In this case, the resource will be remapped in either _customize_resource or _customize_scene
 				break
+		if !is_resource_type:
+			var feature_arrays: Array = remap_resource[path]
+			for feature_array: Array in feature_arrays:
+				var feature: String = feature_array[0]
+				if features.has(feature):
+					var new_path: String = feature_array[1]
+					print("[Resource Remap] File: ", path, " to: ", new_path)
+					add_file(path, FileAccess.get_file_as_bytes(new_path as String), true)
+					break
 
-	if (remap_resource.has(path)
-		|| remap_file.has(path)):
+	if (remap_resource.has(path)):
 		# Do not skip this path, even if it is listed as a new path to remap to.
 		# An example of this would be "vr" feature using the default resource as
 		# a top-priority override and also having a different resource as the
@@ -75,7 +83,7 @@ func _export_file(path: String, _type: String, features: PackedStringArray) -> v
 				if _features.has(feature):
 					var new_path: String = feature_array[1]
 					if new_path == path:
-						print("[Resource Remap] NOT skipping %s because its imported file is referenced by another resource: %s" % [_type, path])
+						#print_debug("[Resource Remap Debug] NOT skipping %s because its imported file is referenced by another resource: %s" % [_type, path])
 						return
 					else:
 						# We've found the first valid feature mapping for this remap and it's not
@@ -87,15 +95,7 @@ func _export_file(path: String, _type: String, features: PackedStringArray) -> v
 		for feature_array: Array in feature_arrays:
 			var remapped_path: String = feature_array[1]
 			if remapped_path == path:
-				print("[Resource Remap] Skipping resource because it has been remapped: ", path)
-				skip()
-				return
-
-	for feature_arrays: Array in remap_file.values():
-		for feature_array: Array in feature_arrays:
-			var remapped_path: String = feature_array[1]
-			if remapped_path == path:
-				print("[Resource Remap] Skipping file because it has been remapped: ", path)
+				#print_debug("[Resource Remap Debug] Skipping file because it has been remapped: ", path)
 				skip()
 				return
 
