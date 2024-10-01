@@ -1,3 +1,4 @@
+#TODO: add license
 @tool
 extends EditorPlugin
 

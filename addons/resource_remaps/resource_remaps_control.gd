@@ -1,3 +1,4 @@
+#TODO: add license and note about being copied from Godot source
 class_name ResourceRemapControl extends VBoxContainer
 
 var res_remap_option_add_button: Button = null
@@ -38,7 +39,8 @@ func _res_remap_add(p_paths: PackedStringArray) -> void:
 	for path in p_paths:
 		if !remaps.has(path):
 			# Don't overwrite with an empty remap array if an array already exists for the given path.
-			remaps[path] = PackedStringArray()
+			var new_array: Array[PackedStringArray]
+			remaps[path] = new_array
 
 	undo_redo.create_action(TTR("Resource Remap: Add %d Path(s)") % p_paths.size())
 	undo_redo.add_do_property(ProjectSettings, "resource_remaps", remaps)
@@ -66,9 +68,12 @@ func _res_remap_option_add(p_paths: PackedStringArray) -> void:
 	if !remaps.has(key):
 		return
 
-	var r: PackedStringArray = remaps[key]
+	var r: Array[PackedStringArray] = remaps[key]
 	for path in p_paths:
-		r.append(path + ":en")
+		var remap_array: PackedStringArray
+		remap_array.append("pc")
+		remap_array.append(path)
+		r.append(remap_array)
 	remaps[key] = r
 
 	undo_redo.create_action(TTR("Resource Remap: Add %d Remap(s)") % p_paths.size())
@@ -100,46 +105,46 @@ func _res_remap_option_selected(p_locale: String) -> void:
 	ed.set_text(1, TranslationServer.get_locale_name(p_locale))
 	ed.set_tooltip_text(1, p_locale)
 
-	_res_remap_option_changed()
-
-func _res_remap_option_changed() -> void:
-	if updating_res_remaps:
-		return
-
-	if !ProjectSettings.has_setting("resource_remaps"):
-		return
-
-	var remaps: Dictionary = ProjectSettings.get_setting("resource_remaps")
-
-	var k: TreeItem = res_remap.get_selected()
-	if k == null:
-		return
-	var ed: TreeItem = res_remap_options.get_edited()
-	if ed == null:
-		return
-
-	var key: String = k.get_metadata(0)
-	var idx: int = ed.get_metadata(0)
-	var path: String = ed.get_metadata(1)
-	var locale: String = ed.get_tooltip_text(1)
-
-	if !remaps.has(key):
-		return
-	var r: PackedStringArray = remaps[key]
-	r[idx] = path + ":" + locale
-	remaps[key] = r
-
-	updating_res_remaps = true
-
-	undo_redo.create_action(TTR("Change Resource Remap Language"))
-	undo_redo.add_do_property(ProjectSettings, "resource_remaps", remaps)
-	undo_redo.add_undo_property(ProjectSettings, "resource_remaps", ProjectSettings.get_setting("resource_remaps"))
-	undo_redo.add_do_method(update_res_remaps)
-	undo_redo.add_undo_method(update_res_remaps)
-	undo_redo.commit_action()
-	ProjectSettings.save()
-
-	updating_res_remaps = false
+	#_res_remap_option_changed()
+#
+#func _res_remap_option_changed() -> void:
+	#if updating_res_remaps:
+		#return
+#
+	#if !ProjectSettings.has_setting("resource_remaps"):
+		#return
+#
+	#var remaps: Dictionary = ProjectSettings.get_setting("resource_remaps")
+#
+	#var k: TreeItem = res_remap.get_selected()
+	#if k == null:
+		#return
+	#var ed: TreeItem = res_remap_options.get_edited()
+	#if ed == null:
+		#return
+#
+	#var key: String = k.get_metadata(0)
+	#var idx: int = ed.get_metadata(0)
+	#var path: String = ed.get_metadata(1)
+	#var locale: String = ed.get_tooltip_text(1)
+#
+	#if !remaps.has(key):
+		#return
+	#var r: PackedStringArray = remaps[key]
+	#r[idx] = path + ":" + locale
+	#remaps[key] = r
+#
+	#updating_res_remaps = true
+#
+	#undo_redo.create_action(TTR("Change Resource Remap Language"))
+	#undo_redo.add_do_property(ProjectSettings, "resource_remaps", remaps)
+	#undo_redo.add_undo_property(ProjectSettings, "resource_remaps", ProjectSettings.get_setting("resource_remaps"))
+	#undo_redo.add_do_method(update_res_remaps)
+	#undo_redo.add_undo_method(update_res_remaps)
+	#undo_redo.commit_action()
+	#ProjectSettings.save()
+#
+	#updating_res_remaps = false
 
 func _res_remap_delete(p_item: Object, p_column: int, p_button: int, p_mouse_button: int) -> void:
 	if updating_res_remaps:
@@ -223,7 +228,7 @@ func _filesystem_files_moved(p_old_file: String, p_new_file: String) -> void:
 
 	# Check for the keys.
 	if remaps.has(p_old_file):
-		var remapped_files: PackedStringArray = remaps[p_old_file]
+		var remapped_files: Array[PackedStringArray] = remaps[p_old_file]
 		remaps.erase(p_old_file)
 		remaps[p_new_file] = remapped_files
 		remaps_changed = true
@@ -232,21 +237,20 @@ func _filesystem_files_moved(p_old_file: String, p_new_file: String) -> void:
 	# Check for the Array elements of the values.
 	var remap_keys: Array = remaps.keys()
 	for i in range(remap_keys.size()):
-		var remapped_files: PackedStringArray = remaps[remap_keys[i]]
+		var remapped_files: Array[PackedStringArray] = remaps[remap_keys[i]]
 		var remapped_files_updated: bool = false
 
 		for j in range(remapped_files.size()):
-			var splitter_pos: int = remapped_files[j].rfind(":")
-			var res_path: String = remapped_files[j].substr(0, splitter_pos)
+			var res_path: String = remapped_files[j][1]
 
 			if res_path == p_old_file:
-				var locale_name: String = remapped_files[j].substr(splitter_pos + 1)
+				var feature: String = remapped_files[j][0]
 				# Replace the element at that index.
-				remapped_files.insert(j, p_new_file + ":" + locale_name)
-				remapped_files.remove_at(j + 1)
+				remapped_files[j][1] = p_new_file
 				remaps_changed = true
 				remapped_files_updated = true
-				print_verbose("Changed remap value \"%s\" to \"%s\" of key \"%s\" due to a moved file." % [res_path + ":" + locale_name, remapped_files[j], remap_keys[i]])
+				# TODO: not sure if this prints anything useful anymore:
+				print_verbose("Changed remap value \"%s\" to \"%s\" of key \"%s\" due to a moved file." % [feature + ":" + res_path, remapped_files[j], remap_keys[i]])
 
 		if remapped_files_updated:
 			remaps[remap_keys[i]] = remapped_files
@@ -268,12 +272,12 @@ func _filesystem_file_removed(p_file: String) -> void:
 	if !remaps_changed:
 		var remap_keys: Array = remaps.keys()
 		for i in range(remap_keys.size()):
-			var remapped_files: PackedStringArray = remaps[remap_keys[i]]
+			var remapped_files: Array[PackedStringArray] = remaps[remap_keys[i]]
 			for j in range(remapped_files.size()):
-				var splitter_pos: int = remapped_files[j].rfind(":")
-				var res_path: String = remapped_files[j].substr(0, splitter_pos)
+				var res_path: String = remapped_files[j][1]
 				if p_file == res_path:
 					remaps_changed = true
+					# TODO: not sure if this prints anything useful anymore:
 					print_verbose("Remap value \"%s\" of key \"%s\" has been removed from the file system." % [remapped_files[j], remap_keys[i]])
 					break
 			if remaps_changed:
@@ -326,12 +330,11 @@ func update_res_remaps() -> void:
 				t.select(0)
 				res_remap_option_add_button.disabled = false
 
-				var selected: PackedStringArray = remaps[key]
+				var selected: Array[PackedStringArray] = remaps[key]
 				for j in range(selected.size()):
-					var s2: String = selected[j]
-					var qp: int = s2.rfind(":")
-					var path: String = s2.substr(0, qp)
-					var locale: String = s2.substr(qp + 1, s2.length())
+					var s2: PackedStringArray = selected[j]
+					var path: String = s2[1]
+					var feature: String = s2[0]
 
 					var t2: TreeItem = res_remap_options.create_item(root2)
 					t2.set_editable(0, false)
@@ -340,10 +343,10 @@ func update_res_remaps() -> void:
 					t2.set_metadata(0, j)
 					t2.add_button(0, remove_icon, 0, false, TTR("Remove"))
 					t2.set_cell_mode(1, TreeItem.CELL_MODE_CUSTOM)
-					t2.set_text(1, TranslationServer.get_locale_name(locale))
+					t2.set_text(1, feature)
 					t2.set_editable(1, true)
 					t2.set_metadata(1, path)
-					t2.set_tooltip_text(1, locale)
+					t2.set_tooltip_text(1, feature)
 #
 					## Display that it has been removed if this is the case.
 					if !FileAccess.file_exists(path):
@@ -420,7 +423,7 @@ func _init() -> void:
 	res_remap_options.set_column_expand(1, false)
 	res_remap_options.set_column_clip_content(1, false)
 	res_remap_options.set_column_custom_minimum_width(1, 250)
-	res_remap_options.item_edited.connect(_res_remap_option_changed)
+	# TODO: res_remap_options.item_edited.connect(_res_remap_option_changed)
 	res_remap_options.button_clicked.connect(_res_remap_option_delete)
 	res_remap_options.custom_popup_edited.connect(_res_remap_option_popup)
 	tmc.add_child(res_remap_options)

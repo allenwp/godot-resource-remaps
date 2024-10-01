@@ -1,32 +1,10 @@
+#TODO: add license
 @tool
 class_name ResourceRemapPlugin extends EditorExportPlugin
 
-var _features: PackedStringArray
 var _resource_extensions: PackedStringArray = ResourceLoader.get_recognized_extensions_for_type("Resource")
-
-var remap_resource: Dictionary
-
-func _init() -> void:
-	# Temporary while I figure out the GUI for this:
-	remap_resource = {
-		"res://icon-default.svg": [
-			["ios", "res://icon-ios.svg"],
-			["mobile", "res://icon-mobile.svg"],
-		],
-		"res://noise-pc.png": [
-			["mobile", "res://noise-mobile.png"],
-		],
-		"res://audio-default.wav": [
-			["mobile", "res://audio-mobile.wav"],
-		],
-		"res://default.tscn": [
-			["ios", "res://ios.tscn"],
-			["mobile", "res://mobile.tscn"],
-		],
-		"res://default.ogv": [
-			["mobile", "res://mobile.ogv"],
-		],
-	}
+var _features: PackedStringArray
+var _remaps: Dictionary
 
 func _get_name() -> String:
 	# Name must start with a capital letter earlier than G to work around Godot issue #90364 / 93487
@@ -43,9 +21,15 @@ func _get_customization_configuration_hash() -> int:
 func _export_begin(features: PackedStringArray, _is_debug: bool, _path: String, _flags: int) -> void:
 	print("[Resource Remap] Remapping resources...")
 	_features = features
+	var remap_settings: Variant = ProjectSettings.get_setting("resource_remaps")
+	if typeof(remap_settings) == TYPE_DICTIONARY:
+		_remaps = (remap_settings as Dictionary).duplicate(true)
+
+func _export_end() -> void:
+	_remaps.clear()
 
 func _export_file(path: String, _type: String, features: PackedStringArray) -> void:
-	if remap_resource.has(path):
+	if _remaps.has(path):
 		var is_resource_type: bool = false
 		var this_extension:String = path.get_extension()
 		for res_extension: String in _resource_extensions:
@@ -54,8 +38,8 @@ func _export_file(path: String, _type: String, features: PackedStringArray) -> v
 				is_resource_type = true # In this case, the resource will be remapped in either _customize_resource or _customize_scene
 				break
 		if !is_resource_type:
-			var feature_arrays: Array = remap_resource[path]
-			for feature_array: Array in feature_arrays:
+			var feature_arrays: Array[PackedStringArray] = _remaps[path]
+			for feature_array: PackedStringArray in feature_arrays:
 				var feature: String = feature_array[0]
 				if features.has(feature):
 					var new_path: String = feature_array[1]
@@ -63,7 +47,7 @@ func _export_file(path: String, _type: String, features: PackedStringArray) -> v
 					add_file(path, FileAccess.get_file_as_bytes(new_path as String), true)
 					break
 
-	if (remap_resource.has(path)):
+	if (_remaps.has(path)):
 		# Do not skip this path, even if it is listed as a new path to remap to.
 		# An example of this would be "vr" feature using the default resource as
 		# a top-priority override and also having a different resource as the
@@ -77,8 +61,8 @@ func _export_file(path: String, _type: String, features: PackedStringArray) -> v
 		|| _type == "CompressedTexture2D" \
 		|| _type == "CompressedTexture2DArray" \
 		|| _type == "CompressedTexture3D":
-		for feature_arrays: Array in remap_resource.values():
-			for feature_array: Array in feature_arrays:
+		for feature_arrays: Array[PackedStringArray] in _remaps.values():
+			for feature_array: PackedStringArray in feature_arrays:
 				var feature: String = feature_array[0]
 				if _features.has(feature):
 					var new_path: String = feature_array[1]
@@ -91,8 +75,8 @@ func _export_file(path: String, _type: String, features: PackedStringArray) -> v
 						break
 
 	# Skip all files that are overrides:
-	for feature_arrays: Array in remap_resource.values():
-		for feature_array: Array in feature_arrays:
+	for feature_arrays: Array[PackedStringArray] in _remaps.values():
+		for feature_array: PackedStringArray in feature_arrays:
 			var remapped_path: String = feature_array[1]
 			if remapped_path == path:
 				#print_debug("[Resource Remap Debug] Skipping file because it has been remapped: ", path)
@@ -103,9 +87,9 @@ func _begin_customize_resources (_platform: EditorExportPlatform, _f: PackedStri
 	return true
 
 func _customize_resource(_resource: Resource, path: String) -> Resource:
-	if remap_resource.has(path):
-		var feature_arrays: Array = remap_resource[path]
-		for feature_array: Array in feature_arrays:
+	if _remaps.has(path):
+		var feature_arrays: Array[PackedStringArray] = _remaps[path]
+		for feature_array: PackedStringArray in feature_arrays:
 			var feature: String = feature_array[0]
 			if _features.has(feature):
 				var new_path: String = feature_array[1]
@@ -117,9 +101,9 @@ func _begin_customize_scenes(_platform: EditorExportPlatform, _f: PackedStringAr
 	return true
 
 func _customize_scene(scene: Node, path: String) -> Node:
-	if remap_resource.has(path):
-		var feature_arrays: Array = remap_resource[path]
-		for feature_array: Array in feature_arrays:
+	if _remaps.has(path):
+		var feature_arrays:  Array[PackedStringArray] = _remaps[path]
+		for feature_array: PackedStringArray in feature_arrays:
 			var feature: String = feature_array[0]
 			if _features.has(feature):
 				var new_path: String = feature_array[1]
