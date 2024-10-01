@@ -89,61 +89,47 @@ func _res_remap_select() -> void:
 		return
 	call_deferred("update_res_remaps")
 
-func _res_remap_option_popup(_p_arrow_clicked: bool) -> void:
+func _res_remap_option_changed() -> void:
+	if updating_res_remaps:
+		return
+
+	if !ProjectSettings.has_setting("resource_remaps"):
+		return
+
+	var remaps: Dictionary = ProjectSettings.get_setting("resource_remaps")
+
+	var k: TreeItem = res_remap.get_selected()
+	if k == null:
+		return
 	var ed: TreeItem = res_remap_options.get_edited()
 	if ed == null:
 		return
 
-	# TODO: For localizaition, this would pop up a whole new dialog for selecting your locale.
-	# For resource remaps, this should just be a pre-populated feature drop-down.
+	var key: String = k.get_metadata(0)
+	var old_feature: String = ed.get_metadata(0)
+	var new_feature: String = "TODO: newly selected feature"
+	ed.get_range(1)
 
-func _res_remap_option_selected(p_locale: String) -> void:
-	var ed: TreeItem = res_remap_options.get_edited()
-	if ed == null:
+	if !remaps.has(key):
 		return
+	var r: Array[PackedStringArray] = remaps[key]
+	for i in range(r.size()):
+		if r[i][0] == old_feature:
+			r[i][0] = new_feature
+			break
+	remaps[key] = r
 
-	ed.set_text(1, TranslationServer.get_locale_name(p_locale))
-	ed.set_tooltip_text(1, p_locale)
+	updating_res_remaps = true
 
-	#_res_remap_option_changed()
-#
-#func _res_remap_option_changed() -> void:
-	#if updating_res_remaps:
-		#return
-#
-	#if !ProjectSettings.has_setting("resource_remaps"):
-		#return
-#
-	#var remaps: Dictionary = ProjectSettings.get_setting("resource_remaps")
-#
-	#var k: TreeItem = res_remap.get_selected()
-	#if k == null:
-		#return
-	#var ed: TreeItem = res_remap_options.get_edited()
-	#if ed == null:
-		#return
-#
-	#var key: String = k.get_metadata(0)
-	#var feature: String = ed.get_metadata(0)
-	#var locale: String = ed.get_tooltip_text(1)
-#
-	#if !remaps.has(key):
-		#return
-	#var r: PackedStringArray = remaps[key]
-	#r[idx] = path + ":" + locale
-	#remaps[key] = r
-#
-	#updating_res_remaps = true
-#
-	#undo_redo.create_action(TTR("Change Resource Remap Language"))
-	#undo_redo.add_do_property(ProjectSettings, "resource_remaps", remaps)
-	#undo_redo.add_undo_property(ProjectSettings, "resource_remaps", ProjectSettings.get_setting("resource_remaps"))
-	#undo_redo.add_do_method(update_res_remaps)
-	#undo_redo.add_undo_method(update_res_remaps)
-	#undo_redo.commit_action()
-	#ProjectSettings.save()
-#
-	#updating_res_remaps = false
+	undo_redo.create_action(TTR("Change Resource Remap Language"))
+	undo_redo.add_do_property(ProjectSettings, "resource_remaps", remaps)
+	undo_redo.add_undo_property(ProjectSettings, "resource_remaps", ProjectSettings.get_setting("resource_remaps"))
+	undo_redo.add_do_method(update_res_remaps)
+	undo_redo.add_undo_method(update_res_remaps)
+	undo_redo.commit_action()
+	ProjectSettings.save()
+
+	updating_res_remaps = false
 
 func _res_remap_delete(p_item: Object, p_column: int, p_button: int, p_mouse_button: int) -> void:
 	if updating_res_remaps:
@@ -344,11 +330,12 @@ func update_res_remaps() -> void:
 					t2.set_tooltip_text(0, path)
 					t2.set_metadata(0, feature)
 					t2.add_button(0, remove_icon, 0, false, TTR("Remove"))
-					t2.set_cell_mode(1, TreeItem.CELL_MODE_CUSTOM)
-					t2.set_text(1, feature)
+					t2.set_cell_mode(1, TreeItem.CELL_MODE_RANGE)
+					t2.set_text(1, "feature,ios,pc") # TODO: actually set this up similar to the project settings list
+					t2.set_metadata(1, feature)
 					t2.set_editable(1, true)
 					t2.set_tooltip_text(1, feature)
-#
+
 					## Display that it has been removed if this is the case.
 					if !FileAccess.file_exists(path):
 						t2.set_text(0, str([t2.get_text(0), " (", TTR("Removed"), ")"]))
@@ -424,9 +411,8 @@ func _init() -> void:
 	res_remap_options.set_column_expand(1, false)
 	res_remap_options.set_column_clip_content(1, false)
 	res_remap_options.set_column_custom_minimum_width(1, 250)
-	# TODO: res_remap_options.item_edited.connect(_res_remap_option_changed)
+	res_remap_options.item_edited.connect(_res_remap_option_changed)
 	res_remap_options.button_clicked.connect(_res_remap_option_delete)
-	res_remap_options.custom_popup_edited.connect(_res_remap_option_popup)
 	tmc.add_child(res_remap_options)
 
 	res_remap_option_file_open_dialog = EditorFileDialog.new()
