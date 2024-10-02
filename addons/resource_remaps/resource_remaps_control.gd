@@ -107,8 +107,8 @@ func _res_remap_option_changed() -> void:
 
 	var key: String = k.get_metadata(0)
 	var old_feature: String = ed.get_metadata(0)
-	var new_feature: String = "TODO: newly selected feature"
-	ed.get_range(1)
+	var features: PackedStringArray = ed.get_text(1).split(",")
+	var new_feature: String = features[clampi(ed.get_range(1), 0, features.size() - 1)]
 
 	if !remaps.has(key):
 		return
@@ -116,6 +116,7 @@ func _res_remap_option_changed() -> void:
 	for i in range(r.size()):
 		if r[i][0] == old_feature:
 			r[i][0] = new_feature
+			ed.set_metadata(0, new_feature)
 			break
 	remaps[key] = r
 
@@ -282,6 +283,13 @@ func update_res_remaps() -> void:
 
 	updating_res_remaps = true
 
+	var features: PackedStringArray
+	features.append_array(["ios", "android", "mobile", "pc"])
+	var features_str: String = ""
+	for feat in features:
+		features_str += feat + ","
+	features_str = features_str.substr(0, features_str.length() - 1)
+
 	# Update resource remaps.
 	var remap_selected: String
 	if res_remap.get_selected():
@@ -331,7 +339,14 @@ func update_res_remaps() -> void:
 					t2.set_metadata(0, feature)
 					t2.add_button(0, remove_icon, 0, false, TTR("Remove"))
 					t2.set_cell_mode(1, TreeItem.CELL_MODE_RANGE)
-					t2.set_text(1, "feature,ios,pc") # TODO: actually set this up similar to the project settings list
+					var this_features_str: String = features_str
+					var features_index: int = features.find(feature)
+					# We're using an unknown feature, so add it onto the end of the list:
+					if features_index < 0:
+						this_features_str = this_features_str + "," + feature
+						features_index = features.size()
+					t2.set_text(1, this_features_str)
+					t2.set_range(1, features_index)
 					t2.set_metadata(1, feature)
 					t2.set_editable(1, true)
 					t2.set_tooltip_text(1, feature)
