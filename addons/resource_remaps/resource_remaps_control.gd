@@ -71,7 +71,7 @@ func _res_remap_option_add(p_paths: PackedStringArray) -> void:
 	var r: Array[PackedStringArray] = remaps[key]
 	for path in p_paths:
 		var remap_array: PackedStringArray
-		remap_array.append("pc")
+		remap_array.append("(not configured)")
 		remap_array.append(path)
 		r.append(remap_array)
 	remaps[key] = r
@@ -131,6 +131,8 @@ func _res_remap_option_changed() -> void:
 	ProjectSettings.save()
 
 	updating_res_remaps = false
+
+	update_res_remaps()
 
 func _res_remap_delete(p_item: Object, p_column: int, p_button: int, p_mouse_button: int) -> void:
 	if updating_res_remaps:
@@ -284,11 +286,7 @@ func update_res_remaps() -> void:
 	updating_res_remaps = true
 
 	var features: PackedStringArray
-	features.append_array(["ios", "android", "mobile", "pc"])
-	var features_str: String = ""
-	for feat in features:
-		features_str += feat + ","
-	features_str = features_str.substr(0, features_str.length() - 1)
+	features.append_array(["ios", "android", "mobile", "pc"]) # TODO: load these from export presets, platforms, etc. like Project Settings does.
 
 	# Update resource remaps.
 	var remap_selected: String
@@ -336,15 +334,23 @@ func update_res_remaps() -> void:
 					t2.set_editable(0, false)
 					t2.set_text(0, path.replace("res://", ""))
 					t2.set_tooltip_text(0, path)
-					t2.set_metadata(0, feature)
+					t2.set_metadata(0, feature) # TODO: Set this back to be the index (j) isntead and use the index for deteting, editing, etc. This way we can have duplicates
 					t2.add_button(0, remove_icon, 0, false, TTR("Remove"))
 					t2.set_cell_mode(1, TreeItem.CELL_MODE_RANGE)
-					var this_features_str: String = features_str
-					var features_index: int = features.find(feature)
+
+					var available_features: PackedStringArray = features.duplicate()
+					for remap: PackedStringArray in selected:
+						if remap[0] != feature:
+							var feature_index: int = features.find(remap[0])
+							if feature_index > -1:
+								available_features.remove_at(feature_index)
+					var this_features_str: String = _features_range_string(available_features)
+					var features_index: int = available_features.find(feature)
 					# We're using an unknown feature, so add it onto the end of the list:
 					if features_index < 0:
 						this_features_str = this_features_str + "," + feature
-						features_index = features.size()
+						features_index = available_features.size()
+
 					t2.set_text(1, this_features_str)
 					t2.set_range(1, features_index)
 					t2.set_metadata(1, feature)
@@ -357,6 +363,12 @@ func update_res_remaps() -> void:
 						t2.set_tooltip_text(0, str([t2.get_tooltip_text(0), TTR(" cannot be found.")]))
 
 	updating_res_remaps = false
+
+func _features_range_string(features: PackedStringArray) -> String:
+	var features_str: String = ""
+	for feat in features:
+		features_str += feat + ","
+	return features_str.substr(0, features_str.length() - 1)
 
 func _init() -> void:
 	name = TTR("Resource Remaps")
