@@ -286,7 +286,42 @@ func update_res_remaps() -> void:
 	updating_res_remaps = true
 
 	var features: PackedStringArray
-	features.append_array(["ios", "android", "mobile", "pc"]) # TODO: load these from export presets, platforms, etc. like Project Settings does.
+	# Copied from ProjectSettingsEditor::_add_feature_overrides()
+	features.append("bptc");
+	features.append("s3tc");
+	features.append("etc2");
+	features.append("editor");
+	features.append("editor_hint");
+	features.append("editor_runtime");
+	features.append("template_debug");
+	features.append("template_release");
+	features.append("debug");
+	features.append("release");
+	features.append("template");
+	features.append("double");
+	features.append("single");
+	features.append("32");
+	features.append("64");
+	features.append("movie");
+
+	for i: int in range(EditorExport.get_export_platform_count()):
+		var platform_features: Array[String] = EditorExport.get_export_platform(i).get_platform_features()
+		for feature: String in platform_features:
+			if !features.has(feature):
+				features.append(feature)
+
+	for i: int in range(EditorExport.get_export_preset_count()):
+		var preset: EditorExportPreset = EditorExport.get_export_preset(i)
+		var preset_features: Array[String] = EditorExport.get_export_platform(i).get_preset_features(preset)
+		for feature: String in preset_features:
+			if !features.has(feature):
+				features.append(feature)
+
+		var custom_features: String = preset.get_custom_features()
+		for feature: String in custom_features.split(",", false):
+			feature = feature.strip_edges()
+			if !feature.is_empty() && !features.has(feature):
+				features.append(feature)
 
 	# Update resource remaps.
 	var remap_selected: String
