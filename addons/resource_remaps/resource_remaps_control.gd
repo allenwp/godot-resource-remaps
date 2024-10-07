@@ -312,7 +312,7 @@ func update_res_remaps() -> void:
 
 	for i: int in range(EditorExport.get_export_preset_count()):
 		var preset: EditorExportPreset = EditorExport.get_export_preset(i)
-		var preset_features: Array[String] = EditorExport.get_export_platform(i).get_preset_features(preset)
+		var preset_features: Array[String] = preset.get_platform().get_preset_features(preset)
 		for feature: String in preset_features:
 			if !features.has(feature):
 				features.append(feature)
