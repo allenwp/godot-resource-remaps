@@ -381,10 +381,10 @@ func update_res_remaps() -> void:
 								available_features.remove_at(feature_index)
 					var this_features_str: String = _features_range_string(available_features)
 					var features_index: int = available_features.find(feature)
-					# We're using an unknown feature, so add it onto the end of the list:
+					# We're using an unknown feature, so add it onto the start of the list:
 					if features_index < 0:
-						this_features_str = this_features_str + "," + feature
-						features_index = available_features.size()
+						this_features_str = feature + "," + this_features_str
+						features_index = 0
 
 					t2.set_text(1, this_features_str)
 					t2.set_range(1, features_index)
