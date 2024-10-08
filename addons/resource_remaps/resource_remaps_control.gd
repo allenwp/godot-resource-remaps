@@ -63,7 +63,7 @@ func _res_remap_option_add(p_paths: PackedStringArray) -> void:
 	if k == null:
 		return
 
-	var key: String = k.get_metadata(0)
+	var key: String = k.get_metadata(0) # key is the path in res_remap
 
 	if !remaps.has(key):
 		return
@@ -105,20 +105,17 @@ func _res_remap_option_changed() -> void:
 	if ed == null:
 		return
 
-	var key: String = k.get_metadata(0)
-	var old_feature: String = ed.get_metadata(0)
+	var key: String = k.get_metadata(0) # key is the path in res_remap
+	var idx: int = ed.get_metadata(0);
 	var features: PackedStringArray = ed.get_text(1).split(",")
-	var new_feature: String = features[clampi(ed.get_range(1), 0, features.size() - 1)]
+	var new_feature: String = features[clampi(int(ed.get_range(1)), 0, features.size() - 1)]
 
 	if !remaps.has(key):
 		return
 	var r: Array[PackedStringArray] = remaps[key]
-	for i in range(r.size()):
-		if r[i][0] == old_feature:
-			r[i][0] = new_feature
-			ed.set_metadata(0, new_feature)
-			break
+	r[idx][0] = new_feature
 	remaps[key] = r
+	ed.set_metadata(1, new_feature)
 
 	updating_res_remaps = true
 
@@ -182,21 +179,15 @@ func _res_remap_option_delete(p_item: Object, p_column: int, p_button: int, p_mo
 	if ed == null:
 		return
 
-	var key: String = k.get_metadata(0)
-	var feature: String = ed.get_metadata(0)
+	var key: String = k.get_metadata(0) # key is the path in res_remap
+	var idx: int = ed.get_metadata(0)
 
 	if !remaps.has(key):
 		return
 	var r: Array[PackedStringArray] = remaps[key]
-	var idx: int = -1
-	for i in range(r.size()):
-		if r[i][0] == feature:
-			idx = i
-			break
-	if idx < 0:
-		return
 	r.remove_at(idx)
 	remaps[key] = r
+	# No need to update other TreeItem metadata because that will be recreated in update_res_remaps()
 
 	undo_redo.create_action(TTR("Remove Resource Remap Option"))
 	undo_redo.add_do_property(ProjectSettings, "resource_remaps", remaps)
@@ -341,7 +332,7 @@ func update_res_remaps() -> void:
 		var keys: Array = remaps.keys()
 		keys.sort()
 
-		for key:String in keys:
+		for key:String in keys: # key is the path in res_remap
 			var t: TreeItem = res_remap.create_item(root)
 			t.set_editable(0, false)
 			t.set_text(0, key.replace("res://", ""))
@@ -369,7 +360,7 @@ func update_res_remaps() -> void:
 					t2.set_editable(0, false)
 					t2.set_text(0, path.replace("res://", ""))
 					t2.set_tooltip_text(0, path)
-					t2.set_metadata(0, feature) # TODO: Set this back to be the index (j) isntead and use the index for deteting, editing, etc. This way we can have duplicates
+					t2.set_metadata(0, j)
 					t2.add_button(0, remove_icon, 0, false, TTR("Remove"))
 					t2.set_cell_mode(1, TreeItem.CELL_MODE_RANGE)
 
