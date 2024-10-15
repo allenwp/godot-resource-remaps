@@ -403,8 +403,8 @@ func update_res_remaps() -> void:
 						features_index = 0
 
 					var t2: TreeItem = res_remap_options.create_item(root2)
-					t2.set_cell_mode(0, TreeItem.CELL_MODE_RANGE)
 
+					t2.set_cell_mode(0, TreeItem.CELL_MODE_RANGE)
 					t2.set_text(0, this_features_str)
 					t2.set_range(0, features_index)
 					t2.set_metadata(0, j) # Index used for deleting and changing TreeItems in res_remap_option
@@ -416,6 +416,10 @@ func update_res_remaps() -> void:
 					t2.set_tooltip_text(1, path)
 					t2.add_button(1, remove_icon, 0, false, TTR("Remove"))
 					t2.set_metadata(1, path) # Path is used for saving to project settings when the TreeItems are reordered
+
+					var tripple_bar_icon: Texture2D = EditorInterface.get_base_control().get_theme_icon(&"TripleBar", &"EditorIcons")
+					t2.set_cell_mode(2, TreeItem.CELL_MODE_ICON)
+					t2.set_icon(2, tripple_bar_icon)
 
 					## Display that it has been removed if this is the case.
 					if !FileAccess.file_exists(path):
@@ -493,7 +497,7 @@ func _init() -> void:
 
 	res_remap_options = ResoureRemapTree.new()
 	res_remap_options.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	res_remap_options.columns = 2
+	res_remap_options.columns = 3
 	res_remap_options.set_column_title(0, TTR("Feature"))
 	res_remap_options.set_column_title(1, TTR("Path"))
 	res_remap_options.column_titles_visible = true
@@ -502,6 +506,10 @@ func _init() -> void:
 	res_remap_options.set_column_expand(0, false)
 	res_remap_options.set_column_clip_content(0, false)
 	res_remap_options.set_column_custom_minimum_width(0, 250)
+	res_remap_options.set_column_clip_content(2, true)
+	res_remap_options.set_column_expand(2, false)
+	res_remap_options.set_column_clip_content(2, false)
+	res_remap_options.set_column_custom_minimum_width(2, 50)
 	res_remap_options.item_edited.connect(_res_remap_option_changed)
 	res_remap_options.button_clicked.connect(_res_remap_option_delete)
 	res_remap_options.tree_items_reordered.connect(_res_remap_option_reorderd)
