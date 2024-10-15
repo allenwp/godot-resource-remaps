@@ -107,15 +107,14 @@ func _res_remap_option_changed() -> void:
 
 	var key: String = k.get_metadata(0) # key is the path in res_remap
 	var idx: int = ed.get_metadata(0);
-	var features: PackedStringArray = ed.get_text(1).split(",")
-	var new_feature: String = features[clampi(int(ed.get_range(1)), 0, features.size() - 1)]
+	var features: PackedStringArray = ed.get_text(0).split(",")
+	var new_feature: String = features[clampi(int(ed.get_range(0)), 0, features.size() - 1)]
 
 	if !remaps.has(key):
 		return
 	var r: Array[PackedStringArray] = remaps[key]
 	r[idx][0] = new_feature
 	remaps[key] = r
-	ed.set_metadata(1, new_feature)
 
 	updating_res_remaps = true
 
@@ -353,16 +352,8 @@ func update_res_remaps() -> void:
 				var selected: Array[PackedStringArray] = remaps[key]
 				for j in range(selected.size()):
 					var s2: PackedStringArray = selected[j]
-					var path: String = s2[1]
 					var feature: String = s2[0]
-
-					var t2: TreeItem = res_remap_options.create_item(root2)
-					t2.set_editable(0, false)
-					t2.set_text(0, path.replace("res://", ""))
-					t2.set_tooltip_text(0, path)
-					t2.set_metadata(0, j)
-					t2.add_button(0, remove_icon, 0, false, TTR("Remove"))
-					t2.set_cell_mode(1, TreeItem.CELL_MODE_RANGE)
+					var path: String = s2[1]
 
 					var available_features: PackedStringArray = features.duplicate()
 					for remap: PackedStringArray in selected:
@@ -377,16 +368,24 @@ func update_res_remaps() -> void:
 						this_features_str = feature + "," + this_features_str
 						features_index = 0
 
-					t2.set_text(1, this_features_str)
-					t2.set_range(1, features_index)
-					t2.set_metadata(1, feature)
-					t2.set_editable(1, true)
-					t2.set_tooltip_text(1, feature)
+					var t2: TreeItem = res_remap_options.create_item(root2)
+					t2.set_cell_mode(0, TreeItem.CELL_MODE_RANGE)
+
+					t2.set_text(0, this_features_str)
+					t2.set_range(0, features_index)
+					t2.set_metadata(0, j)
+					t2.set_editable(0, true)
+					t2.set_tooltip_text(0, feature)
+
+					t2.set_editable(1, false)
+					t2.set_text(1, path.replace("res://", ""))
+					t2.set_tooltip_text(1, path)
+					t2.add_button(1, remove_icon, 0, false, TTR("Remove"))
 
 					## Display that it has been removed if this is the case.
 					if !FileAccess.file_exists(path):
-						t2.set_text(0, str([t2.get_text(0), " (", TTR("Removed"), ")"]))
-						t2.set_tooltip_text(0, str([t2.get_tooltip_text(0), TTR(" cannot be found.")]))
+						t2.set_text(1, str([t2.get_text(1), " (", TTR("Removed"), ")"]))
+						t2.set_tooltip_text(1, str([t2.get_tooltip_text(1), TTR(" cannot be found.")]))
 
 	updating_res_remaps = false
 
@@ -456,14 +455,14 @@ func _init() -> void:
 	res_remap_options = Tree.new()
 	res_remap_options.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	res_remap_options.columns = 2
-	res_remap_options.set_column_title(0, TTR("Path"))
-	res_remap_options.set_column_title(1, TTR("Feature"))
+	res_remap_options.set_column_title(0, TTR("Feature"))
+	res_remap_options.set_column_title(1, TTR("Path"))
 	res_remap_options.column_titles_visible = true
-	res_remap_options.set_column_expand(0, true)
+	res_remap_options.set_column_expand(1, true)
 	res_remap_options.set_column_clip_content(0, true)
-	res_remap_options.set_column_expand(1, false)
-	res_remap_options.set_column_clip_content(1, false)
-	res_remap_options.set_column_custom_minimum_width(1, 250)
+	res_remap_options.set_column_expand(0, false)
+	res_remap_options.set_column_clip_content(0, false)
+	res_remap_options.set_column_custom_minimum_width(0, 250)
 	res_remap_options.item_edited.connect(_res_remap_option_changed)
 	res_remap_options.button_clicked.connect(_res_remap_option_delete)
 	tmc.add_child(res_remap_options)
