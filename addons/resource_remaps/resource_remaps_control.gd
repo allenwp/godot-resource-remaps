@@ -1,4 +1,4 @@
-#TODO: add license and note about being copied from Godot source
+ 	#TODO: add license and note about being copied from Godot source
 class_name ResourceRemapControl extends VBoxContainer
 
 var res_remap_option_add_button: Button = null
@@ -7,7 +7,7 @@ var res_remap_option_file_open_dialog: EditorFileDialog = null
 ## List of resources
 var res_remap: Tree = null
 ## List of remaps for selected resource
-var res_remap_options: Tree = null
+var res_remap_options: ResoureRemapTree = null
 
 var updating_res_remaps: bool = false
 
@@ -107,8 +107,7 @@ func _res_remap_option_changed() -> void:
 
 	var key: String = k.get_metadata(0) # key is the path in res_remap
 	var idx: int = ed.get_metadata(0);
-	var features: PackedStringArray = ed.get_text(0).split(",")
-	var new_feature: String = features[clampi(int(ed.get_range(0)), 0, features.size() - 1)]
+	var new_feature: String = _get_selected_feature_from_rage(ed)
 
 	if !remaps.has(key):
 		return
@@ -189,6 +188,41 @@ func _res_remap_option_delete(p_item: Object, p_column: int, p_button: int, p_mo
 	# No need to update other TreeItem metadata because that will be recreated in update_res_remaps()
 
 	undo_redo.create_action(TTR("Remove Resource Remap Option"))
+	undo_redo.add_do_property(ProjectSettings, "resource_remaps", remaps)
+	undo_redo.add_undo_property(ProjectSettings, "resource_remaps", ProjectSettings.get_setting("resource_remaps"))
+	undo_redo.add_do_method(update_res_remaps)
+	undo_redo.add_undo_method(update_res_remaps)
+	undo_redo.commit_action()
+	ProjectSettings.save()
+
+func _res_remap_option_reorderd(item: TreeItem, relative_to: TreeItem, before: bool) -> void:
+	if !ProjectSettings.has_setting("resource_remaps"):
+		return
+
+	var remaps: Dictionary = ProjectSettings.get_setting("resource_remaps")
+
+	var k: TreeItem = res_remap.get_selected()
+	if k == null:
+		return
+
+	var key: String = k.get_metadata(0) # key is the path in res_remap
+
+	if !remaps.has(key):
+		return
+
+	var r: Array[PackedStringArray]
+
+	var root: TreeItem = res_remap_options.get_root()
+	for i: int in range(root.get_child_count()):
+		var ti: TreeItem = root.get_child(i)
+		ti.set_metadata(0, i)
+		var this_remap: PackedStringArray
+		this_remap.push_back(_get_selected_feature_from_rage(ti))
+		this_remap.push_back(ti.get_metadata(1) as String)
+		r.push_back(this_remap)
+	remaps[key] = r
+
+	undo_redo.create_action(TTR("Resource Remap: Reordered remaps for %s") % k)
 	undo_redo.add_do_property(ProjectSettings, "resource_remaps", remaps)
 	undo_redo.add_undo_property(ProjectSettings, "resource_remaps", ProjectSettings.get_setting("resource_remaps"))
 	undo_redo.add_do_method(update_res_remaps)
@@ -373,7 +407,7 @@ func update_res_remaps() -> void:
 
 					t2.set_text(0, this_features_str)
 					t2.set_range(0, features_index)
-					t2.set_metadata(0, j)
+					t2.set_metadata(0, j) # Index used for deleting and changing TreeItems in res_remap_option
 					t2.set_editable(0, true)
 					t2.set_tooltip_text(0, feature)
 
@@ -381,6 +415,7 @@ func update_res_remaps() -> void:
 					t2.set_text(1, path.replace("res://", ""))
 					t2.set_tooltip_text(1, path)
 					t2.add_button(1, remove_icon, 0, false, TTR("Remove"))
+					t2.set_metadata(1, path) # Path is used for saving to project settings when the TreeItems are reordered
 
 					## Display that it has been removed if this is the case.
 					if !FileAccess.file_exists(path):
@@ -394,6 +429,10 @@ func _features_range_string(features: PackedStringArray) -> String:
 	for feat in features:
 		features_str += feat + ","
 	return features_str.substr(0, features_str.length() - 1)
+
+func _get_selected_feature_from_rage(ti: TreeItem) -> String:
+	var features: PackedStringArray = ti.get_text(0).split(",")
+	return features[clampi(int(ti.get_range(0)), 0, features.size() - 1)]
 
 func _init() -> void:
 	name = TTR("Resource Remaps")
@@ -452,7 +491,7 @@ func _init() -> void:
 	tmc.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	tvb.add_child(tmc)
 
-	res_remap_options = Tree.new()
+	res_remap_options = ResoureRemapTree.new()
 	res_remap_options.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	res_remap_options.columns = 2
 	res_remap_options.set_column_title(0, TTR("Feature"))
@@ -465,6 +504,7 @@ func _init() -> void:
 	res_remap_options.set_column_custom_minimum_width(0, 250)
 	res_remap_options.item_edited.connect(_res_remap_option_changed)
 	res_remap_options.button_clicked.connect(_res_remap_option_delete)
+	res_remap_options.tree_items_reordered.connect(_res_remap_option_reorderd)
 	tmc.add_child(res_remap_options)
 
 	res_remap_option_file_open_dialog = EditorFileDialog.new()
