@@ -133,7 +133,7 @@ func _res_remap_option_changed() -> void:
 
 	update_res_remaps()
 
-func _res_remap_delete(p_item: Object, p_column: int, p_button: int, p_mouse_button: int) -> void:
+func _res_remap_delete(p_item: Object, _p_column: int, _p_button: int, p_mouse_button: int) -> void:
 	if updating_res_remaps:
 		return
 
@@ -162,7 +162,7 @@ func _res_remap_delete(p_item: Object, p_column: int, p_button: int, p_mouse_but
 	undo_redo.commit_action()
 	ProjectSettings.save()
 
-func _res_remap_option_delete(p_item: Object, p_column: int, p_button: int, p_mouse_button: MouseButton) -> void:
+func _res_remap_option_delete(p_item: Object, _p_column: int, _p_button: int, p_mouse_button: MouseButton) -> void:
 	if updating_res_remaps:
 		return
 
@@ -199,7 +199,7 @@ func _res_remap_option_delete(p_item: Object, p_column: int, p_button: int, p_mo
 	undo_redo.commit_action()
 	ProjectSettings.save()
 
-func _res_remap_option_reorderd(item: TreeItem, relative_to: TreeItem, before: bool) -> void:
+func _res_remap_option_reorderd(_item: TreeItem, _relative_to: TreeItem, _before: bool) -> void:
 	if !ProjectSettings.has_setting("resource_remaps"):
 		return
 
@@ -222,6 +222,7 @@ func _res_remap_option_reorderd(item: TreeItem, relative_to: TreeItem, before: b
 		ti.set_metadata(handle_col, i)
 		var this_remap: PackedStringArray
 		this_remap.push_back(_get_selected_feature_from_rage(ti))
+		@warning_ignore("unsafe_cast")
 		this_remap.push_back(ti.get_metadata(path_col) as String)
 		r.push_back(this_remap)
 	remaps[key] = r
@@ -394,9 +395,9 @@ func update_res_remaps() -> void:
 					var path: String = s2[1]
 
 					var available_features: PackedStringArray = features.duplicate()
-					for remap: PackedStringArray in selected:
-						if remap[0] != feature:
-							var feature_index: int = features.find(remap[0])
+					for this_remap: PackedStringArray in selected:
+						if this_remap[0] != feature:
+							var feature_index: int = features.find(this_remap[0])
 							if feature_index > -1:
 								available_features.remove_at(feature_index)
 					var this_features_str: String = _features_range_string(available_features)

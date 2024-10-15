@@ -23,6 +23,7 @@ func _export_begin(features: PackedStringArray, _is_debug: bool, _path: String, 
 	_features = features
 	var remap_settings: Variant = ProjectSettings.get_setting("resource_remaps")
 	if typeof(remap_settings) == TYPE_DICTIONARY:
+		@warning_ignore("unsafe_cast")
 		_remaps = (remap_settings as Dictionary).duplicate(true)
 
 func _export_end() -> void:
