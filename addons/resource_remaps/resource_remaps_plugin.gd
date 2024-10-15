@@ -4,6 +4,7 @@ extends EditorPlugin
 
 # TODO:
 # - Undo redo isn't working
+# - test file renames, file system removals, etc.
 # - Translate GUI text
 
 const CONTROL_CONTAINER = CONTAINER_PROJECT_SETTING_TAB_RIGHT

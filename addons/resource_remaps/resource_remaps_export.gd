@@ -16,7 +16,32 @@ func _get_name() -> String:
 	return "A Resource Remaps Export Plugin"
 
 func _get_customization_configuration_hash() -> int:
-	return randi() # TODO: This is definitely the wrong way to do this...
+	# I don't have a way to produce a hash, so a random result should ensure this plugin always runs
+	return randi()
+
+	# This is an attempt at generating a hash, but I expect it won't work because it loads the file
+	# data instead of resource data. File data may remain unchanged, but resource data might change.
+	# For example, the import settings of a resource may change, which would need a new hash, even
+	# though the file data hasn't changed.
+
+	#var hash_context: HashingContext = HashingContext.new()
+	## MD5 is 128 bit, so this is probably most suiting given I can only return 64 bits
+	#hash_context.start(HashingContext.HASH_MD5)
+#
+	#for path: String in _remaps.keys():
+		#add_file_to_hash(path, hash_context)
+		#var this_remap: PackedStringArray = _remaps[path]
+		#add_file_to_hash(this_remap[1], hash_context)
+#
+	#var result: PackedByteArray = hash_context.finish()
+	#return result.decode_u64(0)
+#
+#func add_file_to_hash(path: String, hash_context: HashingContext) -> void:
+	#if FileAccess.file_exists(path):
+		#var file: FileAccess = FileAccess.open(path, FileAccess.READ)
+		#while file.get_position() < file.get_length():
+			#var remaining: int = file.get_length() - file.get_position()
+			#hash_context.update(file.get_buffer(mini(remaining, 1024)))
 
 func _export_begin(features: PackedStringArray, _is_debug: bool, _path: String, _flags: int) -> void:
 	print("[Resource Remap] Remapping resources...")
