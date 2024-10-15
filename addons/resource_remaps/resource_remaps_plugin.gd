@@ -8,7 +8,6 @@ extends EditorPlugin
 const CONTROL_CONTAINER = CONTAINER_PROJECT_SETTING_TAB_RIGHT
 var control: ResourceRemapControl
 
-const ExportPlugin = preload("res://addons/resource_remaps/resource_remaps_export.gd")
 var export_plugin: ResourceRemapPlugin
 
 func _enter_tree() -> void:
@@ -16,7 +15,7 @@ func _enter_tree() -> void:
 	control = ResourceRemapControl.new()
 	add_control_to_container(CONTROL_CONTAINER, control)
 
-	export_plugin = ExportPlugin.new()
+	export_plugin = ResourceRemapPlugin.new()
 	add_export_plugin(export_plugin)
 
 func _exit_tree() -> void:
