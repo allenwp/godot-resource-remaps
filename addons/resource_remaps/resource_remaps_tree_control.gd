@@ -3,7 +3,6 @@ class_name ResoureRemapTree extends Tree
 signal tree_items_reordered(item: TreeItem, relative_to: TreeItem, before: bool)
 
 func _get_drag_data(_at_position: Vector2) -> Variant:
-	# TODO: set_drag_preview
 	return get_selected()
 
 func _can_drop_data(at_position: Vector2, data: Variant) -> bool:

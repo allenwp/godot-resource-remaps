@@ -3,8 +3,8 @@
 extends EditorPlugin
 
 # TODO:
-# - Move tab to the far right? Shouldn't this be already working?
 # - Undo redo isn't working
+# - Translate GUI text
 
 const CONTROL_CONTAINER = CONTAINER_PROJECT_SETTING_TAB_RIGHT
 var control: ResourceRemapControl
