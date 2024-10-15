@@ -10,8 +10,7 @@ func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 	if get_drop_section_at_position(at_position) == -100:
 		return false
 
-	# Take some guesses regarding whether this is the sort of tree item we care about
-	var result: bool = data is TreeItem && typeof((data as TreeItem).get_metadata(0)) == TYPE_INT  && typeof((data as TreeItem).get_metadata(1)) == TYPE_STRING
+	var result: bool = data is TreeItem && (data as TreeItem).get_metadata(1) == "Resource Remap Tree Item"
 	if result:
 		drop_mode_flags = DROP_MODE_INBETWEEN
 	return result

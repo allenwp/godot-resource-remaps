@@ -1,4 +1,4 @@
- 	#TODO: add license and note about being copied from Godot source
+#TODO: add license and note about being copied from Godot source
 class_name ResourceRemapControl extends VBoxContainer
 
 var res_remap_option_add_button: Button = null
@@ -12,6 +12,10 @@ var res_remap_options: ResoureRemapTree = null
 var updating_res_remaps: bool = false
 
 var undo_redo: UndoRedo = UndoRedo.new()
+
+const handle_col = 0
+const feature_col = 1
+const path_col = 2
 
 func TTR(text: String) -> String:
 	# TODO: translate text.
@@ -106,7 +110,7 @@ func _res_remap_option_changed() -> void:
 		return
 
 	var key: String = k.get_metadata(0) # key is the path in res_remap
-	var idx: int = ed.get_metadata(0);
+	var idx: int = ed.get_metadata(handle_col);
 	var new_feature: String = _get_selected_feature_from_rage(ed)
 
 	if !remaps.has(key):
@@ -144,7 +148,7 @@ func _res_remap_delete(p_item: Object, p_column: int, p_button: int, p_mouse_but
 	if k == null:
 		return
 
-	var key: String = k.get_metadata(0)
+	var key: String = k.get_metadata(0) # key is the path in res_remap
 	if !remaps.has(key):
 		return
 
@@ -178,7 +182,7 @@ func _res_remap_option_delete(p_item: Object, p_column: int, p_button: int, p_mo
 		return
 
 	var key: String = k.get_metadata(0) # key is the path in res_remap
-	var idx: int = ed.get_metadata(0)
+	var idx: int = ed.get_metadata(handle_col)
 
 	if !remaps.has(key):
 		return
@@ -215,10 +219,10 @@ func _res_remap_option_reorderd(item: TreeItem, relative_to: TreeItem, before: b
 	var root: TreeItem = res_remap_options.get_root()
 	for i: int in range(root.get_child_count()):
 		var ti: TreeItem = root.get_child(i)
-		ti.set_metadata(0, i)
+		ti.set_metadata(handle_col, i)
 		var this_remap: PackedStringArray
 		this_remap.push_back(_get_selected_feature_from_rage(ti))
-		this_remap.push_back(ti.get_metadata(1) as String)
+		this_remap.push_back(ti.get_metadata(path_col) as String)
 		r.push_back(this_remap)
 	remaps[key] = r
 
@@ -404,27 +408,28 @@ func update_res_remaps() -> void:
 
 					var t2: TreeItem = res_remap_options.create_item(root2)
 
-					t2.set_cell_mode(0, TreeItem.CELL_MODE_RANGE)
-					t2.set_text(0, this_features_str)
-					t2.set_range(0, features_index)
-					t2.set_metadata(0, j) # Index used for deleting and changing TreeItems in res_remap_option
-					t2.set_editable(0, true)
-					t2.set_tooltip_text(0, feature)
-
-					t2.set_editable(1, false)
-					t2.set_text(1, path.replace("res://", ""))
-					t2.set_tooltip_text(1, path)
-					t2.add_button(1, remove_icon, 0, false, TTR("Remove"))
-					t2.set_metadata(1, path) # Path is used for saving to project settings when the TreeItems are reordered
-
+					t2.set_metadata(handle_col, j) # Index used for deleting and changing TreeItems in res_remap_option
 					var tripple_bar_icon: Texture2D = EditorInterface.get_base_control().get_theme_icon(&"TripleBar", &"EditorIcons")
-					t2.set_cell_mode(2, TreeItem.CELL_MODE_ICON)
-					t2.set_icon(2, tripple_bar_icon)
+					t2.set_cell_mode(handle_col, TreeItem.CELL_MODE_ICON)
+					t2.set_icon(handle_col, tripple_bar_icon)
+
+					t2.set_cell_mode(feature_col, TreeItem.CELL_MODE_RANGE)
+					t2.set_text(feature_col, this_features_str)
+					t2.set_range(feature_col, features_index)
+					t2.set_editable(feature_col, true)
+					t2.set_tooltip_text(feature_col, feature)
+					t2.set_metadata(feature_col, "Resource Remap Tree Item") # Used by ResourceRemapTree to determine if this TreeItem can be dropped into the Tree
+
+					t2.set_editable(path_col, false)
+					t2.set_text(path_col, path.replace("res://", ""))
+					t2.set_tooltip_text(path_col, path)
+					t2.add_button(path_col, remove_icon, 0, false, TTR("Remove"))
+					t2.set_metadata(path_col, path) # Path is used for saving to project settings when the TreeItems are reordered
 
 					## Display that it has been removed if this is the case.
 					if !FileAccess.file_exists(path):
-						t2.set_text(1, str([t2.get_text(1), " (", TTR("Removed"), ")"]))
-						t2.set_tooltip_text(1, str([t2.get_tooltip_text(1), TTR(" cannot be found.")]))
+						t2.set_text(path_col, str([t2.get_text(path_col), " (", TTR("Removed"), ")"]))
+						t2.set_tooltip_text(path_col, str([t2.get_tooltip_text(path_col), TTR(" cannot be found.")]))
 
 	updating_res_remaps = false
 
@@ -435,8 +440,8 @@ func _features_range_string(features: PackedStringArray) -> String:
 	return features_str.substr(0, features_str.length() - 1)
 
 func _get_selected_feature_from_rage(ti: TreeItem) -> String:
-	var features: PackedStringArray = ti.get_text(0).split(",")
-	return features[clampi(int(ti.get_range(0)), 0, features.size() - 1)]
+	var features: PackedStringArray = ti.get_text(feature_col).split(",")
+	return features[clampi(int(ti.get_range(feature_col)), 0, features.size() - 1)]
 
 func _init() -> void:
 	name = TTR("Resource Remaps")
@@ -498,18 +503,18 @@ func _init() -> void:
 	res_remap_options = ResoureRemapTree.new()
 	res_remap_options.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	res_remap_options.columns = 3
-	res_remap_options.set_column_title(0, TTR("Feature"))
-	res_remap_options.set_column_title(1, TTR("Path"))
+	res_remap_options.set_column_title(feature_col, TTR("Feature"))
+	res_remap_options.set_column_title(path_col, TTR("Path"))
 	res_remap_options.column_titles_visible = true
-	res_remap_options.set_column_expand(1, true)
-	res_remap_options.set_column_clip_content(0, true)
-	res_remap_options.set_column_expand(0, false)
-	res_remap_options.set_column_clip_content(0, false)
-	res_remap_options.set_column_custom_minimum_width(0, 250)
-	res_remap_options.set_column_clip_content(2, true)
-	res_remap_options.set_column_expand(2, false)
-	res_remap_options.set_column_clip_content(2, false)
-	res_remap_options.set_column_custom_minimum_width(2, 50)
+	res_remap_options.set_column_expand(path_col, true)
+	res_remap_options.set_column_clip_content(feature_col, true)
+	res_remap_options.set_column_expand(feature_col, false)
+	res_remap_options.set_column_clip_content(feature_col, false)
+	res_remap_options.set_column_custom_minimum_width(feature_col, 250)
+	res_remap_options.set_column_clip_content(handle_col, true)
+	res_remap_options.set_column_expand(handle_col, false)
+	res_remap_options.set_column_clip_content(handle_col, false)
+	res_remap_options.set_column_custom_minimum_width(handle_col, 0)
 	res_remap_options.item_edited.connect(_res_remap_option_changed)
 	res_remap_options.button_clicked.connect(_res_remap_option_delete)
 	res_remap_options.tree_items_reordered.connect(_res_remap_option_reorderd)
