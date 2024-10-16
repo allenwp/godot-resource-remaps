@@ -395,7 +395,7 @@ func update_res_remaps() -> void:
 					var available_features: PackedStringArray = features.duplicate()
 					for this_remap: PackedStringArray in selected:
 						if this_remap[0] != feature:
-							var feature_index: int = features.find(this_remap[0])
+							var feature_index: int = available_features.find(this_remap[0])
 							if feature_index > -1:
 								available_features.remove_at(feature_index)
 					var this_features_str: String = _features_range_string(available_features)
