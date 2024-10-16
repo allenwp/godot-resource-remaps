@@ -236,10 +236,6 @@ func _res_remap_option_reorderd(_item: TreeItem, _relative_to: TreeItem, _before
 	undo_redo.commit_action()
 	ProjectSettings.save()
 
-func connect_filesystem_dock_signals(p_fs_dock: FileSystemDock) -> void:
-	p_fs_dock.files_moved.connect(_filesystem_files_moved)
-	p_fs_dock.file_removed.connect(_filesystem_file_removed)
-
 func _filesystem_files_moved(p_old_file: String, p_new_file: String) -> void:
 	var remaps: Dictionary = {}
 	var remaps_changed: bool = false
@@ -431,8 +427,8 @@ func update_res_remaps() -> void:
 
 					## Display that it has been removed if this is the case.
 					if !FileAccess.file_exists(path):
-						t2.set_text(path_col, str([t2.get_text(path_col), " (", TTR("Removed"), ")"]))
-						t2.set_tooltip_text(path_col, str([t2.get_tooltip_text(path_col), TTR(" cannot be found.")]))
+						t2.set_text(path_col, t2.get_text(path_col) + " (" + TTR("Removed") + ")")
+						t2.set_tooltip_text(path_col, t2.get_tooltip_text(path_col) + TTR(" cannot be found."))
 
 	updating_res_remaps = false
 
@@ -513,7 +509,7 @@ func _init() -> void:
 	res_remap_options.set_column_clip_content(feature_col, true)
 	res_remap_options.set_column_expand(feature_col, false)
 	res_remap_options.set_column_clip_content(feature_col, false)
-	res_remap_options.set_column_custom_minimum_width(feature_col, 250)
+	res_remap_options.set_column_custom_minimum_width(feature_col, 220)
 	res_remap_options.set_column_clip_content(handle_col, true)
 	res_remap_options.set_column_expand(handle_col, false)
 	res_remap_options.set_column_clip_content(handle_col, false)
@@ -530,3 +526,11 @@ func _init() -> void:
 
 func _ready() -> void:
 	update_res_remaps()
+
+func _enter_tree() -> void:
+	EditorInterface.get_file_system_dock().files_moved.connect(_filesystem_files_moved)
+	EditorInterface.get_file_system_dock().file_removed.connect(_filesystem_file_removed)
+
+func _exit_tree() -> void:
+	EditorInterface.get_file_system_dock().files_moved.disconnect(_filesystem_files_moved)
+	EditorInterface.get_file_system_dock().file_removed.disconnect(_filesystem_file_removed)
