@@ -334,14 +334,15 @@ func update_res_remaps() -> void:
 	features.append("64");
 	features.append("movie");
 
-	for i: int in range(EditorExport.get_export_platform_count()):
-		var platform_features: Array[String] = EditorExport.get_export_platform(i).get_platform_features()
+	var editor_export: EditorExport = EditorInterface.get_editor_export()
+	for i: int in range(editor_export.get_export_platform_count()):
+		var platform_features: Array[String] = editor_export.get_export_platform(i).get_platform_features()
 		for feature: String in platform_features:
 			if !features.has(feature):
 				features.append(feature)
 
-	for i: int in range(EditorExport.get_export_preset_count()):
-		var preset: EditorExportPreset = EditorExport.get_export_preset(i)
+	for i: int in range(editor_export.get_export_preset_count()):
+		var preset: EditorExportPreset = editor_export.get_export_preset(i)
 		var preset_features: Array[String] = preset.get_platform().get_preset_features(preset)
 		for feature: String in preset_features:
 			if !features.has(feature):

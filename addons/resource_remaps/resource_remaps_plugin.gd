@@ -7,6 +7,7 @@ extends EditorPlugin
 # - test file renames, file system removals, etc.
 # - Translate GUI text
 # - Auto-select newly added resource in first Tree
+# - Refresh entire control when the project settings menu is re-opened to get new tags that may have been added in export presets
 
 const CONTROL_CONTAINER = CONTAINER_PROJECT_SETTING_TAB_RIGHT
 var control: ResourceRemapControl
