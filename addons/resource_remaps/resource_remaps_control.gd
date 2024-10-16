@@ -11,6 +11,7 @@ var res_remap_options: ResoureRemapTree = null
 
 var updating_res_remaps: bool = false
 
+# FIXME: UndoRedo has been written, but doesn't work. Might be related to [TODO: file bug report]
 var undo_redo: UndoRedo = UndoRedo.new()
 
 const handle_col = 0
@@ -121,7 +122,7 @@ func _res_remap_option_changed() -> void:
 
 	updating_res_remaps = true
 
-	undo_redo.create_action(TTR("Change Resource Remap Language"))
+	undo_redo.create_action(TTR("Change Resource Remap Feature"))
 	undo_redo.add_do_property(ProjectSettings, "resource_remaps", remaps)
 	undo_redo.add_undo_property(ProjectSettings, "resource_remaps", ProjectSettings.get_setting("resource_remaps"))
 	undo_redo.add_do_method(update_res_remaps)

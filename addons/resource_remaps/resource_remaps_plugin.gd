@@ -6,6 +6,7 @@ extends EditorPlugin
 # - Undo redo isn't working
 # - test file renames, file system removals, etc.
 # - Translate GUI text
+# - Auto-select newly added resource in first Tree
 
 const CONTROL_CONTAINER = CONTAINER_PROJECT_SETTING_TAB_RIGHT
 var control: ResourceRemapControl
