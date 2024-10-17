@@ -3,10 +3,9 @@
 extends EditorPlugin
 
 # TODO:
+# - Translate GUI text
 # - Undo redo isn't working
 # - test file renames, file system removals, etc.
-# - Translate GUI text
-# - Auto-select newly added resource in first Tree
 # - Refresh entire control when the project settings menu is re-opened to get new tags that may have been added in export presets
 # - Refresh entire control when files get brought back, not just when they're deleted.
 

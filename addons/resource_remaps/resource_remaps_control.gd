@@ -10,6 +10,7 @@ var res_remap: Tree = null
 var res_remap_options: ResoureRemapTree = null
 
 var updating_res_remaps: bool = false
+var recently_added_res_path: String = String()
 
 # FIXME: UndoRedo has been written, but doesn't work. Might be related to [TODO: file bug report]
 var undo_redo: UndoRedo = UndoRedo.new()
@@ -43,19 +44,23 @@ func _res_remap_add(p_paths: PackedStringArray) -> void:
 		remaps = ProjectSettings.get_setting("resource_remaps")
 		prev = remaps
 
+	var added_new_path: bool = false
 	for path in p_paths:
 		if !remaps.has(path):
 			# Don't overwrite with an empty remap array if an array already exists for the given path.
 			var new_array: Array[PackedStringArray]
 			remaps[path] = new_array
+			added_new_path = true
+			recently_added_res_path = path
 
-	undo_redo.create_action(TTR("Resource Remap: Add %d Path(s)") % p_paths.size())
-	undo_redo.add_do_property(ProjectSettings, "resource_remaps", remaps)
-	undo_redo.add_undo_property(ProjectSettings, "resource_remaps", prev)
-	undo_redo.add_do_method(update_res_remaps)
-	undo_redo.add_undo_method(update_res_remaps)
-	undo_redo.commit_action()
-	ProjectSettings.save()
+	if added_new_path:
+		undo_redo.create_action(TTR("Resource Remap: Add %d Path(s)") % p_paths.size())
+		undo_redo.add_do_property(ProjectSettings, "resource_remaps", remaps)
+		undo_redo.add_undo_property(ProjectSettings, "resource_remaps", prev)
+		undo_redo.add_do_method(update_res_remaps)
+		undo_redo.add_undo_method(update_res_remaps)
+		undo_redo.commit_action()
+		ProjectSettings.save()
 
 func _res_remap_option_file_open() -> void:
 	res_remap_option_file_open_dialog.popup_file_dialog()
@@ -349,8 +354,14 @@ func update_res_remaps() -> void:
 
 	# Update resource remaps.
 	var remap_selected: String
-	if res_remap.get_selected():
+	var should_scroll: bool = false
+	if recently_added_res_path != String():
+		remap_selected = recently_added_res_path
+		recently_added_res_path = String()
+		should_scroll = true
+	elif res_remap.get_selected():
 		remap_selected = res_remap.get_selected().get_metadata(0)
+	var selected_ti: TreeItem = null
 
 	res_remap.clear()
 	res_remap_options.clear()
@@ -381,6 +392,7 @@ func update_res_remaps() -> void:
 
 			if key == remap_selected:
 				t.select(0)
+				selected_ti = t
 				res_remap_option_add_button.disabled = false
 
 				var selected: Array[PackedStringArray] = remaps[key]
@@ -426,6 +438,9 @@ func update_res_remaps() -> void:
 					if !FileAccess.file_exists(path):
 						t2.set_text(path_col, t2.get_text(path_col) + " (" + TTR("Removed") + ")")
 						t2.set_tooltip_text(path_col, t2.get_tooltip_text(path_col) + TTR(" cannot be found."))
+
+	if should_scroll and selected_ti != null:
+		res_remap.scroll_to_item(selected_ti)
 
 	updating_res_remaps = false
 
@@ -510,7 +525,7 @@ func _init() -> void:
 	res_remap_options.set_column_clip_content(handle_col, true)
 	res_remap_options.set_column_expand(handle_col, false)
 	res_remap_options.set_column_clip_content(handle_col, false)
-	res_remap_options.set_column_custom_minimum_width(handle_col, 0)
+	res_remap_options.set_column_custom_minimum_width(handle_col, EditorInterface.get_base_control().get_theme_icon(&"TripleBar", &"EditorIcons").get_size().x + 32)
 	res_remap_options.item_edited.connect(_res_remap_option_changed)
 	res_remap_options.button_clicked.connect(_res_remap_option_delete)
 	res_remap_options.tree_items_reordered.connect(_res_remap_option_reorderd)
