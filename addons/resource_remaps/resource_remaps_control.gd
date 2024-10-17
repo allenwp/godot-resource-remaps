@@ -462,6 +462,8 @@ func _init() -> void:
 	thb = HBoxContainer.new()
 	l = Label.new()
 	l.text = TTR("Remaps by Feature:")
+	l.tooltip_text = TTR("From top to bottom, the first remap in this list to match a feature in the export will be used.\n\nAny resources in this list that are not used will be excluded from the export.")
+	l.mouse_filter = Control.MOUSE_FILTER_PASS
 	l.theme_type_variation = "HeaderSmall"
 	thb.add_child(l)
 	thb.add_spacer(false)

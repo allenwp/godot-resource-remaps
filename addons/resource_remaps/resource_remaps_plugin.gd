@@ -6,7 +6,6 @@ extends EditorPlugin
 # - Add license text to source files
 # - Translate GUI text
 # - Undo redo isn't working
-# - Add a help tooltip saying that the order on the features list matters
 
 const CONTROL_CONTAINER = CONTAINER_PROJECT_SETTING_TAB_RIGHT
 var control: ResourceRemapControl
