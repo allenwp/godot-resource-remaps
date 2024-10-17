@@ -29,11 +29,10 @@ func TTR(text: String) -> String:
 
 func _notification(p_what: int) -> void:
 	match p_what:
-		NOTIFICATION_ENTER_TREE:
-			var rfn: PackedStringArray = ResourceLoader.get_recognized_extensions_for_type("Resource")
-			for E: String in rfn:
-				res_remap_file_open_dialog.add_filter("*." + E)
-				res_remap_option_file_open_dialog.add_filter("*." + E)
+		NOTIFICATION_VISIBILITY_CHANGED:
+			# Refresh when this view is shown to grab new custom features, etc.
+			if visible:
+				update_res_remaps()
 
 func _res_remap_file_open() -> void:
 	res_remap_file_open_dialog.popup_file_dialog()
@@ -538,6 +537,13 @@ func _ready() -> void:
 func _enter_tree() -> void:
 	EditorInterface.get_file_system_dock().files_moved.connect(_filesystem_files_moved)
 	EditorInterface.get_file_system_dock().file_removed.connect(_filesystem_file_removed)
+
+	var rfn: PackedStringArray = ResourceLoader.get_recognized_extensions_for_type("Resource")
+	for E: String in rfn:
+		res_remap_file_open_dialog.clear_filters()
+		res_remap_file_open_dialog.add_filter("*." + E)
+		res_remap_option_file_open_dialog.clear_filters()
+		res_remap_option_file_open_dialog.add_filter("*." + E)
 
 func _exit_tree() -> void:
 	EditorInterface.get_file_system_dock().files_moved.disconnect(_filesystem_files_moved)

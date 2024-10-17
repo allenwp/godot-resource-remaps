@@ -7,7 +7,6 @@ extends EditorPlugin
 # - Translate GUI text
 # - Undo redo isn't working
 # - test file renames, file system removals, etc.
-# - Refresh entire control when the project settings menu is re-opened to get new tags that may have been added in export presets
 # - Refresh entire control when files get brought back, not just when they're deleted.
 # - Add a help tooltip saying that the order on the features list matters
 

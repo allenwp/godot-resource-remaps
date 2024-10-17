@@ -19,6 +19,7 @@ func _get_customization_configuration_hash() -> int:
 	# I don't have a way to produce a hash, so a random result should ensure this plugin always runs
 	return randi()
 
+#region Failed attempt at generating a correct hash
 	# This is an attempt at generating a hash, but I expect it won't work because it loads the file
 	# data instead of resource data. File data may remain unchanged, but resource data might change.
 	# For example, the import settings of a resource may change, which would need a new hash, even
@@ -42,6 +43,7 @@ func _get_customization_configuration_hash() -> int:
 		#while file.get_position() < file.get_length():
 			#var remaining: int = file.get_length() - file.get_position()
 			#hash_context.update(file.get_buffer(mini(remaining, 1024)))
+#endregion
 
 func _export_begin(features: PackedStringArray, _is_debug: bool, _path: String, _flags: int) -> void:
 	print("[Resource Remap] Remapping resources...")
