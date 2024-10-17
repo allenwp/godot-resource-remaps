@@ -312,23 +312,6 @@ func update_res_remaps() -> void:
 	updating_res_remaps = true
 
 	var features: PackedStringArray
-	# Copied from ProjectSettingsEditor::_add_feature_overrides()
-	features.append("bptc");
-	features.append("s3tc");
-	features.append("etc2");
-	features.append("editor");
-	features.append("editor_hint");
-	features.append("editor_runtime");
-	features.append("template_debug");
-	features.append("template_release");
-	features.append("debug");
-	features.append("release");
-	features.append("template");
-	features.append("double");
-	features.append("single");
-	features.append("32");
-	features.append("64");
-	features.append("movie");
 
 	var editor_export: EditorExport = EditorInterface.get_editor_export()
 	for i: int in range(editor_export.get_export_platform_count()):
@@ -337,6 +320,15 @@ func update_res_remaps() -> void:
 			if !features.has(feature):
 				features.append(feature)
 
+	# Add all of the features that EditorExportPlatform::get_features might add during the export process:
+	features.append("template");
+	features.append("debug");
+	features.append("template_debug");
+	features.append("release");
+	features.append("template_release");
+	features.append("double");
+	features.append("single");
+
 	for i: int in range(editor_export.get_export_preset_count()):
 		var preset: EditorExportPreset = editor_export.get_export_preset(i)
 		var preset_features: Array[String] = preset.get_platform().get_preset_features(preset)
@@ -344,6 +336,9 @@ func update_res_remaps() -> void:
 			if !features.has(feature):
 				features.append(feature)
 
+	# Put custom features at the end
+	for i: int in range(editor_export.get_export_preset_count()):
+		var preset: EditorExportPreset = editor_export.get_export_preset(i)
 		var custom_features: String = preset.get_custom_features()
 		for feature: String in custom_features.split(",", false):
 			feature = feature.strip_edges()
