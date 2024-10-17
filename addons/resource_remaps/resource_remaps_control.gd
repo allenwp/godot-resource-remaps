@@ -1,4 +1,6 @@
 #TODO: add license and note about being copied from Godot source
+# This class was originally copied from the LocalizationEditor C++ class of Godot.
+# Much of the structure and naming follows the names of that class.
 class_name ResourceRemapControl extends VBoxContainer
 
 var res_remap_option_add_button: Button = null
@@ -127,8 +129,6 @@ func _res_remap_option_changed() -> void:
 	r[idx][0] = new_feature
 	remaps[key] = r
 
-	updating_res_remaps = true
-
 	undo_redo.create_action(TTR("Change Resource Remap Feature"))
 	undo_redo.add_do_property(ProjectSettings, "resource_remaps", remaps)
 	undo_redo.add_undo_property(ProjectSettings, "resource_remaps", ProjectSettings.get_setting("resource_remaps"))
@@ -136,10 +136,6 @@ func _res_remap_option_changed() -> void:
 	undo_redo.add_undo_method(update_res_remaps)
 	undo_redo.commit_action()
 	ProjectSettings.save()
-
-	updating_res_remaps = false
-
-	update_res_remaps()
 
 func _res_remap_delete(p_item: Object, _p_column: int, _p_button: int, p_mouse_button: int) -> void:
 	if updating_res_remaps:
@@ -366,7 +362,7 @@ func update_res_remaps() -> void:
 	res_remap.clear()
 	res_remap_options.clear()
 	var root: TreeItem = res_remap.create_item()
-	var root2: TreeItem = res_remap_options.create_item()
+	var root_options: TreeItem = res_remap_options.create_item()
 	res_remap.set_hide_root(true)
 	res_remap_options.set_hide_root(true)
 	res_remap_option_add_button.disabled = true
@@ -376,12 +372,12 @@ func update_res_remaps() -> void:
 		var keys: Array = remaps.keys()
 		keys.sort()
 
-		for key:String in keys: # key is the path in res_remap
+		for key: String in keys: # key is the path in res_remap
 			var t: TreeItem = res_remap.create_item(root)
 			t.set_editable(0, false)
 			t.set_text(0, key.replace("res://", ""))
 			t.set_tooltip_text(0, key)
-			t.set_metadata(0, key)
+			t.set_metadata(0, key) # Used for mataining selection of this tree item
 			var remove_icon: Texture2D = EditorInterface.get_base_control().get_theme_icon(&"Remove", &"EditorIcons")
 			t.add_button(0, remove_icon, 0, false, TTR("Remove"))
 
@@ -407,14 +403,14 @@ func update_res_remaps() -> void:
 							var feature_index: int = available_features.find(this_remap[0])
 							if feature_index > -1:
 								available_features.remove_at(feature_index)
-					var this_features_str: String = _features_range_string(available_features)
+					var this_features_str: String = features_range_string(available_features)
 					var features_index: int = available_features.find(feature)
 					# We're using an unknown feature, so add it onto the start of the list:
 					if features_index < 0:
 						this_features_str = feature + "," + this_features_str
 						features_index = 0
 
-					var t2: TreeItem = res_remap_options.create_item(root2)
+					var t2: TreeItem = res_remap_options.create_item(root_options)
 
 					t2.set_metadata(handle_col, j) # Index used for deleting and changing TreeItems in res_remap_option
 					var tripple_bar_icon: Texture2D = EditorInterface.get_base_control().get_theme_icon(&"TripleBar", &"EditorIcons")
@@ -444,7 +440,7 @@ func update_res_remaps() -> void:
 
 	updating_res_remaps = false
 
-func _features_range_string(features: PackedStringArray) -> String:
+static func features_range_string(features: PackedStringArray) -> String:
 	var features_str: String = ""
 	for feat in features:
 		features_str += feat + ","
@@ -525,7 +521,7 @@ func _init() -> void:
 	res_remap_options.set_column_clip_content(handle_col, true)
 	res_remap_options.set_column_expand(handle_col, false)
 	res_remap_options.set_column_clip_content(handle_col, false)
-	res_remap_options.set_column_custom_minimum_width(handle_col, EditorInterface.get_base_control().get_theme_icon(&"TripleBar", &"EditorIcons").get_size().x + 32)
+	res_remap_options.set_column_custom_minimum_width(handle_col, int(EditorInterface.get_base_control().get_theme_icon(&"TripleBar", &"EditorIcons").get_size().x) + 32)
 	res_remap_options.item_edited.connect(_res_remap_option_changed)
 	res_remap_options.button_clicked.connect(_res_remap_option_delete)
 	res_remap_options.tree_items_reordered.connect(_res_remap_option_reorderd)
