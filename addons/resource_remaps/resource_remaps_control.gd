@@ -18,6 +18,8 @@ const handle_col = 0
 const feature_col = 1
 const path_col = 2
 
+const tree_item_drag_id = "Resource Remap Tree Item"
+
 func TTR(text: String) -> String:
 	# TODO: translate text.
 	return text
@@ -112,7 +114,7 @@ func _res_remap_option_changed() -> void:
 
 	var key: String = k.get_metadata(0) # key is the path in res_remap
 	var idx: int = ed.get_metadata(handle_col);
-	var new_feature: String = _get_selected_feature_from_rage(ed)
+	var new_feature: String = get_selected_feature_from_rage(ed)
 
 	if !remaps.has(key):
 		return
@@ -222,7 +224,7 @@ func _res_remap_option_reorderd(_item: TreeItem, _relative_to: TreeItem, _before
 		var ti: TreeItem = root.get_child(i)
 		ti.set_metadata(handle_col, i)
 		var this_remap: PackedStringArray
-		this_remap.push_back(_get_selected_feature_from_rage(ti))
+		this_remap.push_back(get_selected_feature_from_rage(ti))
 		@warning_ignore("unsafe_cast")
 		this_remap.push_back(ti.get_metadata(path_col) as String)
 		r.push_back(this_remap)
@@ -412,7 +414,7 @@ func update_res_remaps() -> void:
 					t2.set_range(feature_col, features_index)
 					t2.set_editable(feature_col, true)
 					t2.set_tooltip_text(feature_col, feature)
-					t2.set_metadata(feature_col, "Resource Remap Tree Item") # Used by ResourceRemapTree to determine if this TreeItem can be dropped into the Tree
+					t2.set_metadata(feature_col, tree_item_drag_id) # Used by ResourceRemapTree to determine if this TreeItem can be dropped into the Tree
 
 					t2.set_editable(path_col, false)
 					t2.set_text(path_col, path.replace("res://", ""))
@@ -433,7 +435,7 @@ func _features_range_string(features: PackedStringArray) -> String:
 		features_str += feat + ","
 	return features_str.substr(0, features_str.length() - 1)
 
-func _get_selected_feature_from_rage(ti: TreeItem) -> String:
+static func get_selected_feature_from_rage(ti: TreeItem) -> String:
 	var features: PackedStringArray = ti.get_text(feature_col).split(",")
 	return features[clampi(int(ti.get_range(feature_col)), 0, features.size() - 1)]
 
@@ -529,3 +531,44 @@ func _enter_tree() -> void:
 func _exit_tree() -> void:
 	EditorInterface.get_file_system_dock().files_moved.disconnect(_filesystem_files_moved)
 	EditorInterface.get_file_system_dock().file_removed.disconnect(_filesystem_file_removed)
+
+
+class ResoureRemapTree:
+	extends Tree
+
+	signal tree_items_reordered(item: TreeItem, relative_to: TreeItem, before: bool)
+
+	func _get_drag_data(_at_position: Vector2) -> Variant:
+		var ti: TreeItem = get_selected()
+		var drag_preview: Control = Control.new()
+		var preview_label: Label = Label.new()
+		preview_label.position.x = 22 # If you grab the middle of the hanlde, this space aligns the text to be around the same horizontal position
+		preview_label.text = ResourceRemapControl.get_selected_feature_from_rage(ti)
+		drag_preview.add_child(preview_label)
+		set_drag_preview(drag_preview)
+		return ti
+
+	func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
+		if get_drop_section_at_position(at_position) == -100:
+			return false
+
+		@warning_ignore("unsafe_cast")
+		var result: bool = data is TreeItem && (data as TreeItem).get_metadata(feature_col) == tree_item_drag_id
+		if result:
+			drop_mode_flags = DROP_MODE_INBETWEEN
+		return result
+
+	func _drop_data(at_position: Vector2, data: Variant) -> void:
+		@warning_ignore("unsafe_cast")
+		var dropped_item: TreeItem = data as TreeItem
+		var drop_selection: int = get_drop_section_at_position(at_position)
+		var item: TreeItem = get_item_at_position(at_position)
+		if dropped_item == null || item == null:
+			return
+
+		if drop_selection < 0:
+			dropped_item.move_before(item)
+			tree_items_reordered.emit(dropped_item, item, true)
+		elif drop_selection > 0:
+			dropped_item.move_after(item)
+			tree_items_reordered.emit(dropped_item, item, false)
