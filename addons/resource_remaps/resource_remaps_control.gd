@@ -268,8 +268,7 @@ func _filesystem_files_moved(p_old_file: String, p_new_file: String) -> void:
 				remapped_files[j][1] = p_new_file
 				remaps_changed = true
 				remapped_files_updated = true
-				# TODO: not sure if this prints anything useful anymore:
-				print_verbose("Changed remap value \"%s\" to \"%s\" of key \"%s\" due to a moved file." % [feature + ":" + res_path, remapped_files[j], remap_keys[i]])
+				print_verbose("Changed remap value \"%s\" to \"%s\" of key \"%s\" due to a moved file." % [feature + ":" + res_path, remapped_files[j][0] + ":" + remapped_files[j][1], remap_keys[i]])
 
 		if remapped_files_updated:
 			remaps[remap_keys[i]] = remapped_files
@@ -277,34 +276,6 @@ func _filesystem_files_moved(p_old_file: String, p_new_file: String) -> void:
 	if remaps_changed:
 		ProjectSettings.set_setting("resource_remaps", remaps)
 		ProjectSettings.save()
-		update_res_remaps()
-
-func _filesystem_file_removed(p_file: String) -> void:
-	# Check if the remaps are affected.
-	var remaps: Dictionary
-
-	if ProjectSettings.has_setting("resource_remaps"):
-		remaps = ProjectSettings.get_setting("resource_remaps")
-
-	var remaps_changed: bool = remaps.has(p_file)
-
-	if !remaps_changed:
-		var remap_keys: Array = remaps.keys()
-		for i in range(remap_keys.size()):
-			var remapped_files: Array[PackedStringArray] = remaps[remap_keys[i]]
-			for j in range(remapped_files.size()):
-				var res_path: String = remapped_files[j][1]
-				if p_file == res_path:
-					remaps_changed = true
-					# TODO: not sure if this prints anything useful anymore:
-					print_verbose("Remap value \"%s\" of key \"%s\" has been removed from the file system." % [remapped_files[j], remap_keys[i]])
-					break
-			if remaps_changed:
-				break
-	else:
-		print_verbose("Remap key \"%s\" has been removed from the file system." % p_file)
-
-	if remaps_changed:
 		update_res_remaps()
 
 func update_res_remaps() -> void:
@@ -536,18 +507,16 @@ func _ready() -> void:
 
 func _enter_tree() -> void:
 	EditorInterface.get_file_system_dock().files_moved.connect(_filesystem_files_moved)
-	EditorInterface.get_file_system_dock().file_removed.connect(_filesystem_file_removed)
 
+	res_remap_file_open_dialog.clear_filters()
+	res_remap_option_file_open_dialog.clear_filters()
 	var rfn: PackedStringArray = ResourceLoader.get_recognized_extensions_for_type("Resource")
 	for E: String in rfn:
-		res_remap_file_open_dialog.clear_filters()
 		res_remap_file_open_dialog.add_filter("*." + E)
-		res_remap_option_file_open_dialog.clear_filters()
 		res_remap_option_file_open_dialog.add_filter("*." + E)
 
 func _exit_tree() -> void:
 	EditorInterface.get_file_system_dock().files_moved.disconnect(_filesystem_files_moved)
-	EditorInterface.get_file_system_dock().file_removed.disconnect(_filesystem_file_removed)
 
 
 class ResoureRemapTree:

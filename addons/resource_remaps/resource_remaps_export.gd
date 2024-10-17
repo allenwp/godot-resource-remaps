@@ -62,7 +62,7 @@ func _export_file(path: String, _type: String, features: PackedStringArray) -> v
 		var this_extension:String = path.get_extension()
 		for res_extension: String in _resource_extensions:
 			if this_extension.nocasecmp_to(res_extension) == 0:
-				#print_debug("[Resource Remap Debug] Extension " + this_extension + " matches known resource extension " + res_extension + " for path " + path)
+				print_verbose("[Resource Remap Debug] Extension " + this_extension + " matches known resource extension " + res_extension + " for path " + path)
 				is_resource_type = true # In this case, the resource will be remapped in either _customize_resource or _customize_scene
 				break
 		if !is_resource_type:
@@ -95,7 +95,7 @@ func _export_file(path: String, _type: String, features: PackedStringArray) -> v
 				if _features.has(feature):
 					var new_path: String = feature_array[1]
 					if new_path == path:
-						#print_debug("[Resource Remap Debug] NOT skipping %s because its imported file is referenced by another resource: %s" % [_type, path])
+						print_verbose("[Resource Remap Debug] NOT skipping %s because its imported file is referenced by another resource: %s" % [_type, path])
 						return
 					else:
 						# We've found the first valid feature mapping for this remap and it's not
@@ -107,7 +107,7 @@ func _export_file(path: String, _type: String, features: PackedStringArray) -> v
 		for feature_array: PackedStringArray in feature_arrays:
 			var remapped_path: String = feature_array[1]
 			if remapped_path == path:
-				#print_debug("[Resource Remap Debug] Skipping file because it has been remapped: ", path)
+				print_verbose("[Resource Remap Debug] Skipping file because it has been remapped: ", path)
 				skip()
 				return
 
