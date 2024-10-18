@@ -360,6 +360,8 @@ func update_res_remaps() -> void:
 				t.select(0)
 				selected_ti = t
 				res_remap_option_add_button.disabled = false
+				res_remap_option_file_open_dialog.clear_filters()
+				res_remap_option_file_open_dialog.add_filter("*." + key.get_extension())
 
 				var selected: Array[PackedStringArray] = remaps[key]
 				for j in range(selected.size()):
@@ -511,11 +513,9 @@ func _enter_tree() -> void:
 	EditorInterface.get_file_system_dock().files_moved.connect(_filesystem_files_moved)
 
 	res_remap_file_open_dialog.clear_filters()
-	res_remap_option_file_open_dialog.clear_filters()
 	var rfn: PackedStringArray = ResourceLoader.get_recognized_extensions_for_type("Resource")
 	for E: String in rfn:
 		res_remap_file_open_dialog.add_filter("*." + E)
-		res_remap_option_file_open_dialog.add_filter("*." + E)
 
 func _exit_tree() -> void:
 	EditorInterface.get_file_system_dock().files_moved.disconnect(_filesystem_files_moved)
