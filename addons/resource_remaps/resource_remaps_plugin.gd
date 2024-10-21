@@ -15,6 +15,7 @@ var export_plugin: ResourceRemapPlugin
 func _enter_tree() -> void:
 	# Initialization of the plugin goes here.
 	control = ResourceRemapControl.new()
+	control.undo_redo = get_undo_redo()
 	add_control_to_container(CONTROL_CONTAINER, control)
 
 	export_plugin = ResourceRemapPlugin.new()
@@ -22,10 +23,11 @@ func _enter_tree() -> void:
 
 func _exit_tree() -> void:
 	# Clean-up of the plugin goes here.
-	remove_control_from_container(CONTROL_CONTAINER, control)
-	control.free()
-	control = null
+	if (control):
+		remove_control_from_container(CONTROL_CONTAINER, control)
+		control.free()
+		control = null
 
-	if (export_plugin is EditorExportPlugin):
+	if (export_plugin):
 		remove_export_plugin(export_plugin)
 		export_plugin = null
