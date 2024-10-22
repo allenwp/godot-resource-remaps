@@ -1,27 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://b724pyti0f0j1"]
+[gd_scene format=3 uid="uid://b724pyti0f0j1"]
 
-[ext_resource type="Texture2D" uid="uid://dlo2xxpb1xotf" path="res://demo/icon-default.svg" id="1_6r1mr"]
-[ext_resource type="PackedScene" uid="uid://caskpnunr57d2" path="res://demo/default.tscn" id="1_qk4dg"]
-
-[node name="Main" type="Control"]
+[node name="demo" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="Default" parent="." instance=ExtResource("1_qk4dg")]
-layout_mode = 1
-
-[node name="Icon-default" type="Sprite2D" parent="."]
-position = Vector2(136, 11)
-texture = ExtResource("1_6r1mr")
-centered = false
-
-[node name="Noise-pc" type="Sprite2D" parent="."]
-position = Vector2(436, 195)
-centered = false
-
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-autoplay = true
