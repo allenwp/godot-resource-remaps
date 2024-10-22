@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://b724pyti0f0j1"]
 
-[ext_resource type="Texture2D" uid="uid://dlo2xxpb1xotf" path="res://icon-default.svg" id="1_6r1mr"]
-[ext_resource type="PackedScene" uid="uid://caskpnunr57d2" path="res://default.tscn" id="1_qk4dg"]
+[ext_resource type="Texture2D" uid="uid://dlo2xxpb1xotf" path="res://demo/icon-default.svg" id="1_6r1mr"]
+[ext_resource type="PackedScene" uid="uid://caskpnunr57d2" path="res://demo/default.tscn" id="1_qk4dg"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
