@@ -1,9 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://b724pyti0f0j1"]
+[gd_scene load_steps=3 format=3 uid="uid://b724pyti0f0j1"]
 
 [ext_resource type="Texture2D" uid="uid://dlo2xxpb1xotf" path="res://icon-default.svg" id="1_6r1mr"]
-[ext_resource type="Texture2D" uid="uid://dcbv7ou66ja0m" path="res://noise-pc.png" id="1_agcch"]
 [ext_resource type="PackedScene" uid="uid://caskpnunr57d2" path="res://default.tscn" id="1_qk4dg"]
-[ext_resource type="AudioStream" uid="uid://c8ojkajvbgu6x" path="res://audio-default.wav" id="4_l8hmj"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -23,9 +21,7 @@ centered = false
 
 [node name="Noise-pc" type="Sprite2D" parent="."]
 position = Vector2(436, 195)
-texture = ExtResource("1_agcch")
 centered = false
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("4_l8hmj")
 autoplay = true
