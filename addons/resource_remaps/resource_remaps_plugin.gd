@@ -23,10 +23,6 @@
 @tool
 extends EditorPlugin
 
-# TODO:
-# - Add license text to source files
-# - Translate GUI text
-
 const CONTROL_CONTAINER = CONTAINER_PROJECT_SETTING_TAB_RIGHT
 var control: ResourceRemapControl
 
