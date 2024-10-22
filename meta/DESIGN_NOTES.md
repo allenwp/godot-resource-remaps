@@ -17,13 +17,13 @@ This proposal stems from a [discussion (#5189)](https://github.com/godotengine/g
 
 The resource remaps functionality will appear similar to the existing localization remaps functionality. It will behave differently because it will be based off of feature tags and remapping will be done at the time of export.
 
-![Mockup of resource remaps view](https://github.com/godotengine/godot-proposals/assets/17506573/4c156c59-1497-42e9-a82c-36e02da6f3a4)
+![Mockup of resource remaps view](https://github.com/user-attachments/assets/549dfa4e-a99b-4bee-8ff8-b485871c0d69)
 
 Here are a few important things to note about this design:
 
 1) The new Resource Remap view is implemented almost identically to the existing Localization Remaps view.
 2) Overrides are implemented with similar behaviour to project settings overrides: the first override in the list that matches a feature tag in the export will be chosen when exporting the project. If no overrides match any feature tags in the export, no overrides will be used.
-3) Arrow buttons enable easily changing priority of remaps. This is especially valuable in Android exports that may share some, but not all feature tags. For example, a `meta_quest` could be positioned higher to take precedence over a `mobile` feature tag on this list.
+3) Click-and-drag handles (three bars icon) on the left side enable easily changing the priority of remaps. This is especially valuable in Android exports that may share some, but not all feature tags. For example, a `meta_quest` could be positioned higher to take precedence over a `mobile` feature tag on this list.
 4) Resource Remaps are added to project settings because these are similar to Localization Remaps, which already exist in the Project Settings. Having these two remaps in the same part of the editor makes this new feature easier to find.
 
 ### Excluding Resources
