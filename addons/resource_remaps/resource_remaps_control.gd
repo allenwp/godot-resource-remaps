@@ -41,12 +41,14 @@ func _res_remap_file_open() -> void:
 	res_remap_file_open_dialog.popup_file_dialog()
 
 func _res_remap_add(p_paths: PackedStringArray) -> void:
-	var prev: Variant
 	var remaps: Dictionary
+	var prev_remaps: Dictionary
 
 	if ProjectSettings.has_setting(project_settings_property):
-		remaps = ProjectSettings.get_setting(project_settings_property)
-		prev = remaps.duplicate(true)
+		var setting: Variant = ProjectSettings.get_setting(project_settings_property)
+		if setting is Dictionary:
+			remaps = (setting as Dictionary).duplicate(true)
+			prev_remaps = (setting as Dictionary).duplicate(true)
 
 	var added_new_path: bool = false
 	for path in p_paths:
@@ -58,9 +60,9 @@ func _res_remap_add(p_paths: PackedStringArray) -> void:
 			recently_added_res_path = path
 
 	if added_new_path:
-		undo_redo.create_action(TTR("Resource Remap: Add %d Path(s)") % p_paths.size())
-		undo_redo.add_do_property(ProjectSettings, project_settings_property, remaps.duplicate(true))
-		undo_redo.add_undo_property(ProjectSettings, project_settings_property, prev)
+		undo_redo.create_action(TTR("Resource Remaps: Add %d path(s)") % p_paths.size())
+		undo_redo.add_do_property(ProjectSettings, project_settings_property, remaps)
+		undo_redo.add_undo_property(ProjectSettings, project_settings_property, prev_remaps)
 		undo_redo.add_do_method(self, undo_redo_method_str)
 		undo_redo.add_undo_method(self, undo_redo_method_str)
 		undo_redo.commit_action()
@@ -72,8 +74,13 @@ func _res_remap_option_add(p_paths: PackedStringArray) -> void:
 	if !ProjectSettings.has_setting(project_settings_property):
 		return
 
-	var remaps: Dictionary = ProjectSettings.get_setting(project_settings_property)
-	var prev: Variant = remaps.duplicate(true)
+	var remaps: Dictionary
+	var prev_remaps: Dictionary
+
+	var setting: Variant = ProjectSettings.get_setting(project_settings_property)
+	if setting is Dictionary:
+		remaps = (setting as Dictionary).duplicate(true)
+		prev_remaps = (setting as Dictionary).duplicate(true)
 
 	var k: TreeItem = res_remap.get_selected()
 	if k == null:
@@ -92,9 +99,9 @@ func _res_remap_option_add(p_paths: PackedStringArray) -> void:
 		r.append(remap_array)
 	remaps[key] = r
 
-	undo_redo.create_action(TTR("Resource Remap: Add %d Remap(s)") % p_paths.size())
-	undo_redo.add_do_property(ProjectSettings, project_settings_property, remaps.duplicate(true))
-	undo_redo.add_undo_property(ProjectSettings, project_settings_property, prev)
+	undo_redo.create_action(TTR("Resource Remaps: Add %d remap(s)") % p_paths.size())
+	undo_redo.add_do_property(ProjectSettings, project_settings_property, remaps)
+	undo_redo.add_undo_property(ProjectSettings, project_settings_property, prev_remaps)
 	undo_redo.add_do_method(self, undo_redo_method_str)
 	undo_redo.add_undo_method(self, undo_redo_method_str)
 	undo_redo.commit_action()
@@ -111,8 +118,13 @@ func _res_remap_option_changed() -> void:
 	if !ProjectSettings.has_setting(project_settings_property):
 		return
 
-	var remaps: Dictionary = ProjectSettings.get_setting(project_settings_property)
-	var prev: Variant = remaps.duplicate(true)
+	var remaps: Dictionary
+	var prev_remaps: Dictionary
+
+	var setting: Variant = ProjectSettings.get_setting(project_settings_property)
+	if setting is Dictionary:
+		remaps = (setting as Dictionary).duplicate(true)
+		prev_remaps = (setting as Dictionary).duplicate(true)
 
 	var k: TreeItem = res_remap.get_selected()
 	if k == null:
@@ -131,9 +143,9 @@ func _res_remap_option_changed() -> void:
 	r[idx][0] = new_feature
 	remaps[key] = r
 
-	undo_redo.create_action(TTR("Change Resource Remap Feature"))
-	undo_redo.add_do_property(ProjectSettings, project_settings_property, remaps.duplicate(true))
-	undo_redo.add_undo_property(ProjectSettings, project_settings_property, prev)
+	undo_redo.create_action(TTR("Resource Remaps: Change remap feature to " + new_feature))
+	undo_redo.add_do_property(ProjectSettings, project_settings_property, remaps)
+	undo_redo.add_undo_property(ProjectSettings, project_settings_property, prev_remaps)
 	undo_redo.add_do_method(self, undo_redo_method_str)
 	undo_redo.add_undo_method(self, undo_redo_method_str)
 	undo_redo.commit_action()
@@ -148,8 +160,13 @@ func _res_remap_delete(p_item: Object, _p_column: int, _p_button: int, p_mouse_b
 	if !ProjectSettings.has_setting(project_settings_property):
 		return
 
-	var remaps: Dictionary = ProjectSettings.get_setting(project_settings_property)
-	var prev: Variant = remaps.duplicate(true)
+	var remaps: Dictionary
+	var prev_remaps: Dictionary
+
+	var setting: Variant = ProjectSettings.get_setting(project_settings_property)
+	if setting is Dictionary:
+		remaps = (setting as Dictionary).duplicate(true)
+		prev_remaps = (setting as Dictionary).duplicate(true)
 
 	var k: TreeItem = p_item as TreeItem
 	if k == null:
@@ -161,9 +178,9 @@ func _res_remap_delete(p_item: Object, _p_column: int, _p_button: int, p_mouse_b
 
 	remaps.erase(key)
 
-	undo_redo.create_action(TTR("Remove Resource Remap"))
-	undo_redo.add_do_property(ProjectSettings, project_settings_property, remaps.duplicate(true))
-	undo_redo.add_undo_property(ProjectSettings, project_settings_property, prev)
+	undo_redo.create_action(TTR("Resource Remaps: Remove path " + key))
+	undo_redo.add_do_property(ProjectSettings, project_settings_property, remaps)
+	undo_redo.add_undo_property(ProjectSettings, project_settings_property, prev_remaps)
 	undo_redo.add_do_method(self, undo_redo_method_str)
 	undo_redo.add_undo_method(self, undo_redo_method_str)
 	undo_redo.commit_action()
@@ -178,8 +195,13 @@ func _res_remap_option_delete(p_item: Object, _p_column: int, _p_button: int, p_
 	if !ProjectSettings.has_setting(project_settings_property):
 		return
 
-	var remaps: Dictionary = ProjectSettings.get_setting(project_settings_property)
-	var prev: Variant = remaps.duplicate(true)
+	var remaps: Dictionary
+	var prev_remaps: Dictionary
+
+	var setting: Variant = ProjectSettings.get_setting(project_settings_property)
+	if setting is Dictionary:
+		remaps = (setting as Dictionary).duplicate(true)
+		prev_remaps = (setting as Dictionary).duplicate(true)
 
 	var k: TreeItem = res_remap.get_selected()
 	if k == null:
@@ -198,9 +220,9 @@ func _res_remap_option_delete(p_item: Object, _p_column: int, _p_button: int, p_
 	remaps[key] = r
 	# No need to update other TreeItem metadata because that will be recreated in update_res_remaps()
 
-	undo_redo.create_action(TTR("Remove Resource Remap Option"))
-	undo_redo.add_do_property(ProjectSettings, project_settings_property, remaps.duplicate(true))
-	undo_redo.add_undo_property(ProjectSettings, project_settings_property, prev)
+	undo_redo.create_action(TTR("Resource Remaps: Remove remap for path " + str(k.get_metadata(0))))
+	undo_redo.add_do_property(ProjectSettings, project_settings_property, remaps)
+	undo_redo.add_undo_property(ProjectSettings, project_settings_property, prev_remaps)
 	undo_redo.add_do_method(self, undo_redo_method_str)
 	undo_redo.add_undo_method(self, undo_redo_method_str)
 	undo_redo.commit_action()
@@ -209,8 +231,13 @@ func _res_remap_option_reorderd(_item: TreeItem, _relative_to: TreeItem, _before
 	if !ProjectSettings.has_setting(project_settings_property):
 		return
 
-	var remaps: Dictionary = ProjectSettings.get_setting(project_settings_property)
-	var prev: Variant = remaps.duplicate(true)
+	var remaps: Dictionary
+	var prev_remaps: Dictionary
+
+	var setting: Variant = ProjectSettings.get_setting(project_settings_property)
+	if setting is Dictionary:
+		remaps = (setting as Dictionary).duplicate(true)
+		prev_remaps = (setting as Dictionary).duplicate(true)
 
 	var k: TreeItem = res_remap.get_selected()
 	if k == null:
@@ -234,9 +261,9 @@ func _res_remap_option_reorderd(_item: TreeItem, _relative_to: TreeItem, _before
 		r.push_back(this_remap)
 	remaps[key] = r
 
-	undo_redo.create_action(TTR("Resource Remap: Reordered remaps for %s") % k)
-	undo_redo.add_do_property(ProjectSettings, project_settings_property, remaps.duplicate(true))
-	undo_redo.add_undo_property(ProjectSettings, project_settings_property, prev)
+	undo_redo.create_action(TTR("Resource Remaps: Reordered remaps for %s") % key)
+	undo_redo.add_do_property(ProjectSettings, project_settings_property, remaps)
+	undo_redo.add_undo_property(ProjectSettings, project_settings_property, prev_remaps)
 	undo_redo.add_do_method(self, undo_redo_method_str)
 	undo_redo.add_undo_method(self, undo_redo_method_str)
 	undo_redo.commit_action()
@@ -277,7 +304,7 @@ func _filesystem_files_moved(p_old_file: String, p_new_file: String) -> void:
 			remaps[remap_keys[i]] = remapped_files
 
 	if remaps_changed:
-		# TODO: undo-redo this?
+		# No undo-redo for this because moving files also doesn't have undo-redo.
 		ProjectSettings.set_setting(project_settings_property, remaps)
 		ProjectSettings.save()
 		update_res_remaps()
@@ -528,6 +555,22 @@ func _enter_tree() -> void:
 func _exit_tree() -> void:
 	EditorInterface.get_file_system_dock().files_moved.disconnect(_filesystem_files_moved)
 
+#region Debugging Functions
+#func duplicate_remaps(remaps: Dictionary) -> Dictionary:
+	#var result: Dictionary
+	#for path: String in remaps.keys():
+		#var old_remap: Array[PackedStringArray] = remaps[path]
+		#var new_remap: Array[PackedStringArray]
+		#for feature_map: PackedStringArray in old_remap:
+			#var new_feature_remap: PackedStringArray
+			#for i: int in range(feature_map.size()):
+				#var str_copy: String = feature_map[i]
+				#new_feature_remap.push_back(str_copy)
+			#new_remap.push_back(new_feature_remap)
+		#result[path] = new_remap
+	#
+	#return result
+#endregion
 
 class ResoureRemapTree:
 	extends Tree

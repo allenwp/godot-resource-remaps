@@ -5,7 +5,6 @@ extends EditorPlugin
 # TODO:
 # - Add license text to source files
 # - Translate GUI text
-# - Undo redo isn't working
 
 const CONTROL_CONTAINER = CONTAINER_PROJECT_SETTING_TAB_RIGHT
 var control: ResourceRemapControl
