@@ -200,7 +200,7 @@ func _res_remap_option_changed() -> void:
 	r[idx][0] = new_feature
 	remaps[key] = r
 
-	undo_redo.create_action(TTR("Resource Remaps: Change remap feature to " + new_feature))
+	undo_redo.create_action(TTR("Resource Remaps: Change remap feature to %s") % new_feature)
 	undo_redo.add_do_property(ProjectSettings, project_settings_property, remaps)
 	undo_redo.add_undo_property(ProjectSettings, project_settings_property, prev_remaps)
 	undo_redo.add_do_method(self, undo_redo_method_str)
@@ -237,7 +237,7 @@ func _res_remap_delete(p_item: Object, _p_column: int, _p_button: int, p_mouse_b
 
 	remaps.erase(key)
 
-	undo_redo.create_action(TTR("Resource Remaps: Remove path " + key))
+	undo_redo.create_action(TTR("Resource Remaps: Remove path %s") % key)
 	undo_redo.add_do_property(ProjectSettings, project_settings_property, remaps)
 	undo_redo.add_undo_property(ProjectSettings, project_settings_property, prev_remaps)
 	undo_redo.add_do_method(self, undo_redo_method_str)
@@ -281,7 +281,7 @@ func _res_remap_option_delete(p_item: Object, _p_column: int, _p_button: int, p_
 	remaps[key] = r
 	# No need to update other TreeItem metadata because that will be recreated in update_res_remaps()
 
-	undo_redo.create_action(TTR("Resource Remaps: Remove remap for path " + str(k.get_metadata(0))))
+	undo_redo.create_action(TTR("Resource Remaps: Remove remap for path %s") % str(k.get_metadata(0)))
 	undo_redo.add_do_property(ProjectSettings, project_settings_property, remaps)
 	undo_redo.add_undo_property(ProjectSettings, project_settings_property, prev_remaps)
 	undo_redo.add_do_method(self, undo_redo_method_str)
@@ -451,8 +451,8 @@ func update_res_remaps() -> void:
 
 			# Display that it has been removed if this is the case.
 			if !FileAccess.file_exists(key):
-				t.set_text(0, t.get_text(0) + " (" + TTR("Removed") + ")")
-				t.set_tooltip_text(0, key + TTR(" cannot be found."))
+				t.set_text(0, t.get_text(0) + " " + TTR("(Removed)"))
+				t.set_tooltip_text(0, TTR("%s cannot be found.") % key)
 
 			if key == remap_selected:
 				t.select(0)
@@ -502,8 +502,8 @@ func update_res_remaps() -> void:
 
 					## Display that it has been removed if this is the case.
 					if !FileAccess.file_exists(path):
-						t2.set_text(path_col, t2.get_text(path_col) + " (" + TTR("Removed") + ")")
-						t2.set_tooltip_text(path_col, t2.get_tooltip_text(path_col) + TTR(" cannot be found."))
+						t2.set_text(path_col, t2.get_text(path_col) + " " + TTR("(Removed)"))
+						t2.set_tooltip_text(path_col, TTR("%s cannot be found.") % t2.get_tooltip_text(path_col))
 
 	if should_scroll and selected_ti != null:
 		res_remap.scroll_to_item(selected_ti)
@@ -562,7 +562,7 @@ func _init() -> void:
 	thb = HBoxContainer.new()
 	l = Label.new()
 	l.text = TTR("Remaps by Feature:")
-	l.tooltip_text = TTR("From top to bottom, the first remap in this list to match a feature in the export will be used.\n\nAny resources in this list that are not used will be excluded from the export.")
+	l.tooltip_text = TTR("From top to bottom, the first remap in this list to match a feature in the export will be used.\nAny resources in this list that are not used will be excluded from the export.")
 	l.mouse_filter = Control.MOUSE_FILTER_PASS
 	l.theme_type_variation = "HeaderSmall"
 	thb.add_child(l)
