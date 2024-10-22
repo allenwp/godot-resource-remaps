@@ -98,7 +98,9 @@ func _res_remap_add(p_paths: PackedStringArray) -> void:
 	if ProjectSettings.has_setting(project_settings_property):
 		var setting: Variant = ProjectSettings.get_setting(project_settings_property)
 		if setting is Dictionary:
+			@warning_ignore("unsafe_cast")
 			remaps = (setting as Dictionary).duplicate(true)
+			@warning_ignore("unsafe_cast")
 			prev_remaps = (setting as Dictionary).duplicate(true)
 
 	var added_new_path: bool = false
@@ -130,7 +132,9 @@ func _res_remap_option_add(p_paths: PackedStringArray) -> void:
 
 	var setting: Variant = ProjectSettings.get_setting(project_settings_property)
 	if setting is Dictionary:
+		@warning_ignore("unsafe_cast")
 		remaps = (setting as Dictionary).duplicate(true)
+		@warning_ignore("unsafe_cast")
 		prev_remaps = (setting as Dictionary).duplicate(true)
 
 	var k: TreeItem = res_remap.get_selected()
@@ -174,7 +178,9 @@ func _res_remap_option_changed() -> void:
 
 	var setting: Variant = ProjectSettings.get_setting(project_settings_property)
 	if setting is Dictionary:
+		@warning_ignore("unsafe_cast")
 		remaps = (setting as Dictionary).duplicate(true)
+		@warning_ignore("unsafe_cast")
 		prev_remaps = (setting as Dictionary).duplicate(true)
 
 	var k: TreeItem = res_remap.get_selected()
@@ -216,7 +222,9 @@ func _res_remap_delete(p_item: Object, _p_column: int, _p_button: int, p_mouse_b
 
 	var setting: Variant = ProjectSettings.get_setting(project_settings_property)
 	if setting is Dictionary:
+		@warning_ignore("unsafe_cast")
 		remaps = (setting as Dictionary).duplicate(true)
+		@warning_ignore("unsafe_cast")
 		prev_remaps = (setting as Dictionary).duplicate(true)
 
 	var k: TreeItem = p_item as TreeItem
@@ -251,7 +259,9 @@ func _res_remap_option_delete(p_item: Object, _p_column: int, _p_button: int, p_
 
 	var setting: Variant = ProjectSettings.get_setting(project_settings_property)
 	if setting is Dictionary:
+		@warning_ignore("unsafe_cast")
 		remaps = (setting as Dictionary).duplicate(true)
+		@warning_ignore("unsafe_cast")
 		prev_remaps = (setting as Dictionary).duplicate(true)
 
 	var k: TreeItem = res_remap.get_selected()
@@ -287,7 +297,9 @@ func _res_remap_option_reorderd(_item: TreeItem, _relative_to: TreeItem, _before
 
 	var setting: Variant = ProjectSettings.get_setting(project_settings_property)
 	if setting is Dictionary:
+		@warning_ignore("unsafe_cast")
 		remaps = (setting as Dictionary).duplicate(true)
+		@warning_ignore("unsafe_cast")
 		prev_remaps = (setting as Dictionary).duplicate(true)
 
 	var k: TreeItem = res_remap.get_selected()
