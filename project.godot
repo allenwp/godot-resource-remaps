@@ -8,6 +8,10 @@
 
 config_version=5
 
+resource_remaps={
+"res://demo/audio/default.wav": Array[PackedStringArray]([PackedStringArray("xr", "res://demo/audio/default.wav"), PackedStringArray("mobile", "res://demo/audio/mobile.wav"), PackedStringArray("web", "res://demo/audio/web.wav")])
+}
+
 [application]
 
 config/name="Resource Remaps Demo"

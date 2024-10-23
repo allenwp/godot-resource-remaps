@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://b724pyti0f0j1"]
+[gd_scene load_steps=2 format=3 uid="uid://b724pyti0f0j1"]
+
+[ext_resource type="AudioStream" uid="uid://bwi2qmaqyuq6r" path="res://demo/audio/default.wav" id="1_d6po2"]
 
 [node name="demo" type="Control"]
 layout_mode = 3
@@ -7,3 +9,16 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_d6po2")
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 28.0
+offset_right = 113.0
+offset_bottom = 59.0
+text = "Play audio"
+
+[connection signal="pressed" from="Button" to="AudioStreamPlayer" method="play"]
