@@ -1,9 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://lchdapa5sk73"]
+[gd_scene load_steps=2 format=3 uid="uid://djiuo8t0tj3jg"]
 
-[sub_resource type="Theme" id="Theme_cfeso"]
-default_font_size = 30
+[ext_resource type="PackedScene" uid="uid://cqdid3l8imxmj" path="res://demo/scenes/base.tscn" id="1_v5hrn"]
 
-[node name="PackedScene" type="Label"]
-theme = SubResource("Theme_cfeso")
+[node name="PackedScene" instance=ExtResource("1_v5hrn")]
 text = "Linux Scene"
-horizontal_alignment = 1

@@ -1,9 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://b1o8mai7tyapt"]
+[gd_scene load_steps=2 format=3 uid="uid://dslf6s3f6l15s"]
 
-[sub_resource type="Theme" id="Theme_cfeso"]
-default_font_size = 30
+[ext_resource type="PackedScene" uid="uid://cqdid3l8imxmj" path="res://demo/scenes/base.tscn" id="1_pg64s"]
 
-[node name="PackedScene" type="Label"]
-theme = SubResource("Theme_cfeso")
-text = "MacOS Scene"
-horizontal_alignment = 1
+[node name="PackedScene" instance=ExtResource("1_pg64s")]
+text = "Mac OS Scene"
