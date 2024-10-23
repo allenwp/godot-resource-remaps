@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://lchdapa5sk73"]
+
+[sub_resource type="Theme" id="Theme_cfeso"]
+default_font_size = 30
+
+[node name="PackedScene" type="Label"]
+theme = SubResource("Theme_cfeso")
+text = "Linux Scene"
+horizontal_alignment = 1

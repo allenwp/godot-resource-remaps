@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://e6eycv46h1y3"]
+
+[sub_resource type="Theme" id="Theme_cfeso"]
+default_font_size = 30
+
+[node name="PackedScene" type="Label"]
+theme = SubResource("Theme_cfeso")
+text = "Web Scene"
+horizontal_alignment = 1

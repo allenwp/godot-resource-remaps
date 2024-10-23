@@ -9,13 +9,14 @@
 config_version=5
 
 resource_remaps={
-"res://demo/audio/default.wav": Array[PackedStringArray]([PackedStringArray("xr", "res://demo/audio/default.wav"), PackedStringArray("mobile", "res://demo/audio/mobile.wav"), PackedStringArray("web", "res://demo/audio/web.wav")])
+"res://demo/audio/default.wav": Array[PackedStringArray]([PackedStringArray("xr", "res://demo/audio/default.wav"), PackedStringArray("mobile", "res://demo/audio/mobile.wav"), PackedStringArray("web", "res://demo/audio/web.wav")]),
+"res://demo/scenes/default.tscn": Array[PackedStringArray]([PackedStringArray("xr", "res://demo/scenes/android_xr.tscn"), PackedStringArray("android", "res://demo/scenes/android.tscn"), PackedStringArray("demo", "res://demo/scenes/demo.tscn"), PackedStringArray("ios", "res://demo/scenes/ios.tscn"), PackedStringArray("linux", "res://demo/scenes/linux.tscn"), PackedStringArray("macos", "res://demo/scenes/macOS.tscn"), PackedStringArray("web", "res://demo/scenes/web.tscn"), PackedStringArray("windows", "res://demo/scenes/windows.tscn")])
 }
 
 [application]
 
 config/name="Resource Remaps Demo"
-run/main_scene="res://demo/demo.tscn"
+run/main_scene="res://demo/main.tscn"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://demo/icon.svg"
 
