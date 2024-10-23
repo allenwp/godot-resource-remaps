@@ -54,6 +54,8 @@
 
 class_name ResourceRemapControl extends VBoxContainer
 
+var save_timer: Timer
+
 var res_remap_option_add_button: Button = null
 var res_remap_file_open_dialog: EditorFileDialog = null
 var res_remap_option_file_open_dialog: EditorFileDialog = null
@@ -369,12 +371,15 @@ func _filesystem_files_moved(p_old_file: String, p_new_file: String) -> void:
 	if remaps_changed:
 		# No undo-redo for this because moving files also doesn't have undo-redo.
 		ProjectSettings.set_setting(project_settings_property, remaps)
-		ProjectSettings.save()
+		queue_save()
 		update_res_remaps()
 
 func undo_redo_callback() -> void:
-	ProjectSettings.save()
+	queue_save()
 	update_res_remaps()
+
+func queue_save() -> void:
+	save_timer.start()
 
 func update_res_remaps() -> void:
 	if updating_res_remaps:
@@ -522,6 +527,12 @@ static func get_selected_feature_from_rage(ti: TreeItem) -> String:
 
 func _init() -> void:
 	name = TTR("Resource Remaps")
+
+	save_timer = Timer.new()
+	save_timer.wait_time = 1.5 # Matching ProjectSettingsEditor behaviour
+	save_timer.timeout.connect(ProjectSettings.save)
+	save_timer.one_shot = true
+	add_child(save_timer)
 
 	var container: MarginContainer = MarginContainer.new()
 	container.size_flags_vertical = Control.SIZE_EXPAND_FILL
