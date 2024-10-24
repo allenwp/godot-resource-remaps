@@ -1,5 +1,5 @@
 # Godot Resource Remaps
-Editor plugin for Godot that enables remapping resources by feature. An essential plugin for porting your Godot project!
+Editor plugin for Godot that enables remapping resources by feature. An essential tool for porting your Godot project!
 
 ![Resource Remaps project settings screenshot](./meta/screenshot.png)
 
