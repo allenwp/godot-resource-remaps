@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b81lg4s61s36y"]
 
-[ext_resource type="PackedScene" uid="uid://cqdid3l8imxmj" path="res://demo/scenes/base.tscn" id="1_v2bnd"]
+[ext_resource type="PackedScene" uid="uid://cqdid3l8imxmj" path="res://example/scenes/base.tscn" id="1_v2bnd"]
 
 [node name="PackedScene" instance=ExtResource("1_v2bnd")]
 text = "Web Scene"

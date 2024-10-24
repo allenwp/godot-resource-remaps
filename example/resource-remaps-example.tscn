@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://b724pyti0f0j1"]
 
-[ext_resource type="AudioStream" uid="uid://bwi2qmaqyuq6r" path="res://demo/audio/default.wav" id="1_ru5rj"]
-[ext_resource type="PackedScene" uid="uid://ba8ml13ksn8ed" path="res://demo/scenes/default.tscn" id="2_cvse4"]
-[ext_resource type="Texture2D" uid="uid://civh5me5pvbrx" path="res://demo/textures/default.png" id="3_cvse4"]
+[ext_resource type="AudioStream" uid="uid://bwi2qmaqyuq6r" path="res://example/audio/default.wav" id="1_ru5rj"]
+[ext_resource type="PackedScene" uid="uid://ba8ml13ksn8ed" path="res://example/scenes/default.tscn" id="2_cvse4"]
+[ext_resource type="Texture2D" uid="uid://civh5me5pvbrx" path="res://example/textures/default.png" id="3_cvse4"]
 
 [sub_resource type="Theme" id="Theme_d6po2"]
 default_font_size = 50

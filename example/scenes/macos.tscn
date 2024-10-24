@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dslf6s3f6l15s"]
 
-[ext_resource type="PackedScene" uid="uid://cqdid3l8imxmj" path="res://demo/scenes/base.tscn" id="1_pg64s"]
+[ext_resource type="PackedScene" uid="uid://cqdid3l8imxmj" path="res://example/scenes/base.tscn" id="1_pg64s"]
 
 [node name="PackedScene" instance=ExtResource("1_pg64s")]
 text = "Mac OS Scene"

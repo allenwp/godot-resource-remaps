@@ -9,17 +9,17 @@
 config_version=5
 
 resource_remaps={
-"res://demo/audio/default.wav": Array[PackedStringArray]([PackedStringArray("xr", "res://demo/audio/default.wav"), PackedStringArray("mobile", "res://demo/audio/mobile.wav"), PackedStringArray("web", "res://demo/audio/web.wav")]),
-"res://demo/scenes/default.tscn": Array[PackedStringArray]([PackedStringArray("xr", "res://demo/scenes/android_xr.tscn"), PackedStringArray("android", "res://demo/scenes/android.tscn"), PackedStringArray("demo", "res://demo/scenes/demo.tscn"), PackedStringArray("ios", "res://demo/scenes/ios.tscn"), PackedStringArray("linux", "res://demo/scenes/linux.tscn"), PackedStringArray("macos", "res://demo/scenes/macos.tscn"), PackedStringArray("web", "res://demo/scenes/web.tscn"), PackedStringArray("windows", "res://demo/scenes/windows.tscn")]),
-"res://demo/textures/default.png": Array[PackedStringArray]([PackedStringArray("xr", "res://demo/textures/android_xr.png"), PackedStringArray("android", "res://demo/textures/android.png"), PackedStringArray("demo", "res://demo/textures/demo.png"), PackedStringArray("ios", "res://demo/textures/ios.png"), PackedStringArray("linux", "res://demo/textures/linux.png"), PackedStringArray("macos", "res://demo/textures/macos.png"), PackedStringArray("web", "res://demo/textures/web.png"), PackedStringArray("windows", "res://demo/textures/windows.png")])
+"res://example/audio/default.wav": Array[PackedStringArray]([PackedStringArray("xr", "res://example/audio/default.wav"), PackedStringArray("mobile", "res://example/audio/mobile.wav"), PackedStringArray("web", "res://example/audio/web.wav")]),
+"res://example/scenes/default.tscn": Array[PackedStringArray]([PackedStringArray("xr", "res://example/scenes/android_xr.tscn"), PackedStringArray("android", "res://example/scenes/android.tscn"), PackedStringArray("demo", "res://example/scenes/demo.tscn"), PackedStringArray("ios", "res://example/scenes/ios.tscn"), PackedStringArray("linux", "res://example/scenes/linux.tscn"), PackedStringArray("macos", "res://example/scenes/macos.tscn"), PackedStringArray("web", "res://example/scenes/web.tscn"), PackedStringArray("windows", "res://example/scenes/windows.tscn")]),
+"res://example/textures/default.png": Array[PackedStringArray]([PackedStringArray("xr", "res://example/textures/android_xr.png"), PackedStringArray("android", "res://example/textures/android.png"), PackedStringArray("demo", "res://example/textures/demo.png"), PackedStringArray("ios", "res://example/textures/ios.png"), PackedStringArray("linux", "res://example/textures/linux.png"), PackedStringArray("macos", "res://example/textures/macos.png"), PackedStringArray("web", "res://example/textures/web.png"), PackedStringArray("windows", "res://example/textures/windows.png")])
 }
 
 [application]
 
-config/name="Resource Remaps Demo"
-run/main_scene="res://demo/main.tscn"
+config/name="Resource Remaps Example"
+run/main_scene="res://example/resource-remaps-example.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
-config/icon="res://demo/icon.svg"
+config/icon="res://icon.svg"
 
 [debug]
 

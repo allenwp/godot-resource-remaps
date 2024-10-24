@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bhm4qtyhhaswj"]
 
-[ext_resource type="PackedScene" uid="uid://cqdid3l8imxmj" path="res://demo/scenes/base.tscn" id="1_dju2e"]
+[ext_resource type="PackedScene" uid="uid://cqdid3l8imxmj" path="res://example/scenes/base.tscn" id="1_dju2e"]
 
 [node name="PackedScene" instance=ExtResource("1_dju2e")]
 text = "Android XR Scene"
