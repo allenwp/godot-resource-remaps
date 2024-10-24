@@ -388,38 +388,18 @@ func update_res_remaps() -> void:
 	updating_res_remaps = true
 
 	var features: PackedStringArray
+	# Order doesn't matter on the technical side, but I think users would like
+	# this ordering:
+	add_custom_features(features)
+	add_platform_features(features)
+	add_export_features(features)
+	# Removing preset features because it's unlikely that anyone would ever want
+	# to remap resources based on these features:
+	#add_preset_features(features)
 
-	var editor_export: EditorExport = EditorInterface.get_editor_export()
-	for i: int in range(editor_export.get_export_platform_count()):
-		var platform_features: Array[String] = editor_export.get_export_platform(i).get_platform_features()
-		for feature: String in platform_features:
-			if !features.has(feature):
-				features.append(feature)
-
-	# Add all of the features that EditorExportPlatform::get_features might add during the export process:
-	features.append("template");
-	features.append("debug");
-	features.append("template_debug");
-	features.append("release");
-	features.append("template_release");
-	features.append("double");
-	features.append("single");
-
-	for i: int in range(editor_export.get_export_preset_count()):
-		var preset: EditorExportPreset = editor_export.get_export_preset(i)
-		var preset_features: Array[String] = preset.get_platform().get_preset_features(preset)
-		for feature: String in preset_features:
-			if !features.has(feature):
-				features.append(feature)
-
-	# Put custom features at the end
-	for i: int in range(editor_export.get_export_preset_count()):
-		var preset: EditorExportPreset = editor_export.get_export_preset(i)
-		var custom_features: String = preset.get_custom_features()
-		for feature: String in custom_features.split(",", false):
-			feature = feature.strip_edges()
-			if !feature.is_empty() && !features.has(feature):
-				features.append(feature)
+	print("features: ")
+	for i: int in range(features.size()):
+		print(features[i])
 
 	# Update resource remaps.
 	var remap_selected: String
@@ -514,6 +494,73 @@ func update_res_remaps() -> void:
 		res_remap.scroll_to_item(selected_ti)
 
 	updating_res_remaps = false
+
+func add_string_if_new(str: String, psa: PackedStringArray) -> void:
+	if !psa.has(str):
+		psa.append(str)
+
+func add_platform_features(features: PackedStringArray) -> void:
+	# This list is based off the default configuration of the Godot editor as of 4.4
+	# There are other platform features that may exist for custom editor builds.
+	add_string_if_new("mobile", features);
+	add_string_if_new("android", features);
+	add_string_if_new("ios", features);
+	add_string_if_new("pc", features);
+	add_string_if_new("linux", features);
+	add_string_if_new("macos", features);
+	add_string_if_new("web", features);
+	add_string_if_new("windows", features);
+
+#region Dynamic loading of platform features that requires https://github.com/godotengine/godot/pull/98251 or similar
+	#var editor_export: EditorExport = EditorInterface.get_editor_export()
+	#for i: int in range(editor_export.get_export_platform_count()):
+		#var platform_features: Array[String] = editor_export.get_export_platform(i).get_platform_features()
+		#for feature: String in platform_features:
+			#add_string_if_new(feature, features)
+#endregion
+
+func add_export_features(features: PackedStringArray) -> void:
+	# Add all of the features that EditorExportPlatform::get_features might add during the export process:
+	add_string_if_new("template", features);
+	add_string_if_new("debug", features);
+	add_string_if_new("template_debug", features);
+	add_string_if_new("release", features);
+	add_string_if_new("template_release", features);
+	add_string_if_new("double", features);
+	add_string_if_new("single", features);
+
+func add_preset_features(features: PackedStringArray) -> void:
+	# This list is based off the default configuration of the Godot editor as of 4.3
+	# There are other preset features that may exist for custom editor builds.
+	add_string_if_new("etc2", features);
+	add_string_if_new("astc", features);
+	add_string_if_new("arm64", features);
+	add_string_if_new("bptc", features);
+	add_string_if_new("x86_64", features);
+	add_string_if_new("universal", features);
+	add_string_if_new("nothreads", features);
+	add_string_if_new("wasm32", features);
+
+#region Dynamic loading of preset features that requires https://github.com/godotengine/godot/pull/98251 or similar
+	#var editor_export: EditorExport = EditorInterface.get_editor_export()
+	#for i: int in range(editor_export.get_export_preset_count()):
+		#var preset: EditorExportPreset = editor_export.get_export_preset(i)
+		#var preset_features: Array[String] = preset.get_platform().get_preset_features(preset)
+		#for feature: String in preset_features:
+			#add_string_if_new(feature, features)
+#endregion
+
+func add_custom_features(features: PackedStringArray) -> void:
+#region Minor optimization that requires https://github.com/godotengine/godot/pull/98251 or similar
+	var editor_export: EditorExport = EditorInterface.get_editor_export()
+	for i: int in range(editor_export.get_export_preset_count()):
+		var preset: EditorExportPreset = editor_export.get_export_preset(i)
+		var custom_features: String = preset.get_custom_features()
+		for feature: String in custom_features.split(",", false):
+			feature = feature.strip_edges()
+			if !feature.is_empty():
+				add_string_if_new(feature, features)
+#endregion
 
 static func features_range_string(features: PackedStringArray) -> String:
 	var features_str: String = ""
