@@ -47,4 +47,4 @@ A custom build of the Godot editor is required for support with versions earlier
 ...Can be found in the [design notes](./meta/DESIGN_NOTES.md) file.
 
 # Special Thanks
-Thanks to @KoBeWi for giving guidance throughout development of this plugin!
+Thanks to [KoBeWi](https://github.com/KoBeWi) for giving guidance throughout development of this plugin!
