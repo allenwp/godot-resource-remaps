@@ -1,7 +1,7 @@
 # Godot Resource Remaps
 Editor export plugin for Godot that enables remapping resources by feature.
 
-![Resource Remaps project settings screenshot](meta/screenshot.png)
+![Resource Remaps project settings screenshot](./meta/screenshot.png)
 
 # Features
 - Remap any resource or file in your project to be a different one when your project is exported.
@@ -44,7 +44,7 @@ To work around this limitation, use a default scene that inherits from a base sc
 A custom build of the Godot editor is required for support with versions earlier than 4.3. At minimum, you will need to cherry pick [commit 8e65966](https://github.com/godotengine/godot/commit/8e6596629a7e239bb3b8008b96554850d5688233).
 
 # Design Rational
-...Can be found in the [design notes](meta/DESIGN_NOTES.md) file.
+...Can be found in the [design notes](./meta/DESIGN_NOTES.md) file.
 
 # Special Thanks
 Thanks to @KoBeWi for giving guidance throughout development of this plugin!
