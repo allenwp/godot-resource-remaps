@@ -393,13 +393,9 @@ func update_res_remaps() -> void:
 	add_custom_features(features)
 	add_platform_features(features)
 	add_export_features(features)
-	# Removing preset features because it's unlikely that anyone would ever want
+	# Not including preset features because it's unlikely that anyone would ever want
 	# to remap resources based on these features:
 	#add_preset_features(features)
-
-	print("features: ")
-	for i: int in range(features.size()):
-		print(features[i])
 
 	# Update resource remaps.
 	var remap_selected: String
@@ -495,9 +491,9 @@ func update_res_remaps() -> void:
 
 	updating_res_remaps = false
 
-func add_string_if_new(str: String, psa: PackedStringArray) -> void:
-	if !psa.has(str):
-		psa.append(str)
+func add_string_if_new(value: String, psa: PackedStringArray) -> void:
+	if !psa.has(value):
+		psa.append(value)
 
 func add_platform_features(features: PackedStringArray) -> void:
 	# This list is based off the default configuration of the Godot editor as of 4.4
@@ -551,15 +547,27 @@ func add_preset_features(features: PackedStringArray) -> void:
 #endregion
 
 func add_custom_features(features: PackedStringArray) -> void:
-#region Minor optimization that requires https://github.com/godotengine/godot/pull/98251 or similar
-	var editor_export: EditorExport = EditorInterface.get_editor_export()
-	for i: int in range(editor_export.get_export_preset_count()):
-		var preset: EditorExportPreset = editor_export.get_export_preset(i)
-		var custom_features: String = preset.get_custom_features()
+	var config: ConfigFile = ConfigFile.new()
+	var err: Error = config.load("res://export_presets.cfg")
+	if err != OK:
+		return
+
+	for section: String in config.get_sections():
+		var custom_features: String = config.get_value(section, "custom_features", "")
 		for feature: String in custom_features.split(",", false):
 			feature = feature.strip_edges()
 			if !feature.is_empty():
 				add_string_if_new(feature, features)
+
+#region Minor optimization that requires https://github.com/godotengine/godot/pull/98251 or similar
+	#var editor_export: EditorExport = EditorInterface.get_editor_export()
+	#for i: int in range(editor_export.get_export_preset_count()):
+		#var preset: EditorExportPreset = editor_export.get_export_preset(i)
+		#var custom_features: String = preset.get_custom_features()
+		#for feature: String in custom_features.split(",", false):
+			#feature = feature.strip_edges()
+			#if !feature.is_empty():
+				#add_string_if_new(feature, features)
 #endregion
 
 static func features_range_string(features: PackedStringArray) -> String:
