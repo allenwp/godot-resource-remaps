@@ -37,17 +37,14 @@ Care must be taken when remapping inherited resources, such as inherited scenes.
 To work around this limitation, use a default scene that inherits from a base scene throughout your project. Then remap the default scene to other scenes that also inherit from the base scene. An example of this approach is included in the demo project of this GitHub repository.
 
 # Requirements
-**A custom build of Godot 4.4 with [this PR](https://github.com/godotengine/godot/pull/98251) is required.**
+## Godot 4.3
+**Godot 4.3 or later is required for this plugin.**
 
-## Support for Earlier Godot Versions
-### Godot 4.3
-Support for Godot 4.3 is possible by simply deleting the lines relating to features that give error messages form `res://addons/resource_remaps/resource_remaps_control.gd`. Specifically [these lines](https://github.com/allenwp/godot-resource-remaps/blob/aaa4f3b30e8bc6f829f8c4ad2095c2b2046ce568/addons/resource_remaps/resource_remaps_control.gd#L392-L397) and [these lines](https://github.com/allenwp/godot-resource-remaps/blob/aaa4f3b30e8bc6f829f8c4ad2095c2b2046ce568/addons/resource_remaps/resource_remaps_control.gd#L408-L422). After deleting these lines, you will no longer see feature tags from your project's presets in your Resource Remaps tool. This means that you will need to manually write out the features that your project uses by adding `features.append` lines, similar to the ones that are [already hard-coded](https://github.com/allenwp/godot-resource-remaps/blob/aaa4f3b30e8bc6f829f8c4ad2095c2b2046ce568/addons/resource_remaps/resource_remaps_control.gd#L400-L406).
-
-### Earlier Versions of Godot
-A custom build of the Godot editor is required for support with versions earlier than 4.3
-
-1) Follow the steps listed above relating Godot 4.3 support.
-2) Cherry pick [commit 8e65966](https://github.com/godotengine/godot/commit/8e6596629a7e239bb3b8008b96554850d5688233) and make a custom build of the editor.
+## Earlier Versions of Godot
+A custom build of the Godot editor is required for support with versions earlier than 4.3. At minimum, you will need to cherry pick [commit 8e65966](https://github.com/godotengine/godot/commit/8e6596629a7e239bb3b8008b96554850d5688233).
 
 # Design Rational
 ...Can be found in the [design notes](meta/DESIGN_NOTES.md) file.
+
+# Special Thanks
+Thanks to @KoBeWi for giving guidance throughout development of this plugin!
