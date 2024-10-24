@@ -21,11 +21,13 @@
 # SOFTWARE.
 
 @tool
-class_name ResourceRemapPlugin extends EditorExportPlugin
+class_name ResourceRemapPlugin
+extends EditorExportPlugin
 
 var _resource_extensions: PackedStringArray = ResourceLoader.get_recognized_extensions_for_type("Resource")
 var _features: PackedStringArray
 var _remaps: Dictionary
+
 
 func _get_name() -> String:
 	# Name must start with a capital letter earlier than G to work around Godot issue #90364 / 93487
@@ -35,6 +37,7 @@ func _get_name() -> String:
 	# This can be changed to a later letter in the alphabet to allow for customization of resources
 	# in a different EditorExportPlugin before they are remapped by this plugin(??)
 	return "A Resource Remaps Export Plugin"
+
 
 func _get_customization_configuration_hash() -> int:
 	# I don't have a way to produce a hash, so a random result should ensure this plugin always runs
@@ -66,6 +69,7 @@ func _get_customization_configuration_hash() -> int:
 			#hash_context.update(file.get_buffer(mini(remaining, 1024)))
 #endregion
 
+
 func _export_begin(features: PackedStringArray, _is_debug: bool, _path: String, _flags: int) -> void:
 	print("[Resource Remap] Remapping resources...")
 	_features = features
@@ -74,8 +78,10 @@ func _export_begin(features: PackedStringArray, _is_debug: bool, _path: String, 
 		@warning_ignore("unsafe_cast")
 		_remaps = (remap_settings as Dictionary).duplicate(true)
 
+
 func _export_end() -> void:
 	_remaps.clear()
+
 
 func _export_file(path: String, _type: String, features: PackedStringArray) -> void:
 	if _remaps.has(path):
@@ -132,8 +138,10 @@ func _export_file(path: String, _type: String, features: PackedStringArray) -> v
 				skip()
 				return
 
+
 func _begin_customize_resources (_platform: EditorExportPlatform, _f: PackedStringArray) -> bool:
 	return true
+
 
 func _customize_resource(_resource: Resource, path: String) -> Resource:
 	if _remaps.has(path):
@@ -146,8 +154,10 @@ func _customize_resource(_resource: Resource, path: String) -> Resource:
 				return load(new_path)
 	return null
 
+
 func _begin_customize_scenes(_platform: EditorExportPlatform, _f: PackedStringArray) -> bool:
 	return true
+
 
 func _customize_scene(scene: Node, path: String) -> Node:
 	if _remaps.has(path):

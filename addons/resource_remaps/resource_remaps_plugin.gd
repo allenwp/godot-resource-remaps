@@ -24,26 +24,27 @@
 extends EditorPlugin
 
 const CONTROL_CONTAINER = CONTAINER_PROJECT_SETTING_TAB_RIGHT
-var control: ResourceRemapControl
+var _control: ResourceRemapControl
+var _export_plugin: ResourceRemapPlugin
 
-var export_plugin: ResourceRemapPlugin
 
 func _enter_tree() -> void:
 	# Initialization of the plugin goes here.
-	control = ResourceRemapControl.new()
-	control.undo_redo = get_undo_redo()
-	add_control_to_container(CONTROL_CONTAINER, control)
+	_control = ResourceRemapControl.new()
+	_control.undo_redo = get_undo_redo()
+	add_control_to_container(CONTROL_CONTAINER, _control)
 
-	export_plugin = ResourceRemapPlugin.new()
-	add_export_plugin(export_plugin)
+	_export_plugin = ResourceRemapPlugin.new()
+	add_export_plugin(_export_plugin)
+
 
 func _exit_tree() -> void:
 	# Clean-up of the plugin goes here.
-	if (control):
-		remove_control_from_container(CONTROL_CONTAINER, control)
-		control.free()
-		control = null
+	if (_control):
+		remove_control_from_container(CONTROL_CONTAINER, _control)
+		_control.free()
+		_control = null
 
-	if (export_plugin):
-		remove_export_plugin(export_plugin)
-		export_plugin = null
+	if (_export_plugin):
+		remove_export_plugin(_export_plugin)
+		_export_plugin = null
