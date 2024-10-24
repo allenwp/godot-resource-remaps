@@ -42,6 +42,14 @@ To work around this limitation, use a default scene that inherits from a base sc
 ## Earlier Versions of Godot
 A custom build of the Godot editor is required for versions earlier than Godot 4.3. At minimum, you will need to cherry pick [commit 8e65966](https://github.com/godotengine/godot/commit/8e6596629a7e239bb3b8008b96554850d5688233).
 
+# Feedback
+
+I would love to hear if you've used this plugin in your project! There are a few ways to contact me on my [contact page](https://allenwp.com/contact/).
+
+Please report any bugs on the [Issues page](https://github.com/allenwp/godot-resource-remaps/issues).
+
+If you have any other feedback, you're welcome to post on the [Discussions page](https://github.com/allenwp/godot-resource-remaps/discussions).
+
 # Design Rational
 ...Can be found in the [design notes](./meta/DESIGN_NOTES.md) file.
 
