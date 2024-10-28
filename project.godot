@@ -33,3 +33,7 @@ gdscript/warnings/unsafe_call_argument=2
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/resource_remaps/plugin.cfg")
+
+[rendering]
+
+textures/vram_compression/import_etc2_astc=true
