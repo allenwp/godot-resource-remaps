@@ -330,7 +330,7 @@ func update_res_remaps() -> void:
 
 
 func TTR(text: String) -> String:
-	# TODO: translate text.
+	# text should be translated here
 	return text
 
 
