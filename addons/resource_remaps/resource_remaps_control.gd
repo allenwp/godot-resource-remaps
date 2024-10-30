@@ -228,6 +228,7 @@ func update_res_remaps() -> void:
 	# Order doesn't matter on the technical side, but I think users would like
 	# this ordering:
 	_add_custom_features(features)
+	features.sort()
 	_add_platform_features(features)
 	_add_export_features(features)
 	# Not including preset features because it's unlikely that anyone would ever want
