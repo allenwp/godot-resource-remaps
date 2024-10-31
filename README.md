@@ -17,8 +17,11 @@ Editor plugin for Godot that enables remapping resources by feature. An essentia
 - Make menu scenes appear different in the mobile game than the PC game.
 
 # Usage
+
+[Watch tutorial video on YouTube.](https://youtu.be/28lfFq0Qv9c)
+
 ## Installation
-1) Install the add-on by copying the files from the release package into your project's `addons` folder.
+1) Install the add-on by [downloading it from the Asset Library](https://godotengine.org/asset-library/asset/3451) in Godot or copying the files from the release package into your project's `addons` folder.
 2) Enable the plugin in your Project Settings.
 
 ## Adding Resource Remaps
@@ -44,7 +47,7 @@ A custom build of the Godot editor is required for versions earlier than Godot 4
 
 # Feedback
 
-I would love to hear if you've used this plugin in your project! There are a few ways to contact me on my [contact page](https://allenwp.com/contact/).
+I would love to hear if you've used this plugin in your project! You can share your project on the [Showcase Discussion](https://github.com/allenwp/godot-resource-remaps/discussions/2).
 
 Please report any bugs on the [Issues page](https://github.com/allenwp/godot-resource-remaps/issues).
 
