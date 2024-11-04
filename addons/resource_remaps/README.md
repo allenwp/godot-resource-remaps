@@ -53,6 +53,14 @@ Please report any bugs on the [Issues page](https://github.com/allenwp/godot-res
 
 If you have any other feedback, you're welcome to post on the [Discussions page](https://github.com/allenwp/godot-resource-remaps/discussions).
 
+# Localization
+
+Any translation contributions would be greatly appreciated! Please make a [pull request](https://docs.github.com/en/pull-requests) with your contribution.
+
+All text of this plugin can be found in [`addons/resource_remaps/resource_remaps_control.gd`](https://github.com/allenwp/godot-resource-remaps/blob/main/addons/resource_remaps/resource_remaps_control.gd) and passes through the [`TTR` function](https://github.com/allenwp/godot-resource-remaps/blob/00c93aa2b81e5c9f2ed94de124254fc8a987e6f9/addons/resource_remaps/resource_remaps_control.gd#L333).
+
+Translations should be made to match those found in the [Localization Remaps](https://docs.godotengine.org/en/stable/tutorials/i18n/internationalizing_games.html#localizing-resources) feature of the Godot Editor. Many of the strings in this plugin are similar to those.
+
 # Design Rational
 ...Can be found in the [design notes](./meta/DESIGN_NOTES.md) file.
 
