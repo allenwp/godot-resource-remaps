@@ -55,15 +55,15 @@
 class_name ResourceRemapControl
 extends VBoxContainer
 
-const PROJECT_SETTINGS_PROPERTY = &"resource_remaps"
-const UPDATE_METHOD_STR = &"update_res_remaps"
-const UNDO_REDO_METHOD_STR = &"_undo_redo_callback"
+const PROJECT_SETTINGS_PROPERTY: StringName = &"resource_remaps"
+const UPDATE_METHOD_STR: StringName = &"update_res_remaps"
+const UNDO_REDO_METHOD_STR: StringName = &"_undo_redo_callback"
 
-const HANDLE_COL = 0
-const FEATURE_COL = 1
-const PATH_COL = 2
+const HANDLE_COL: int = 0
+const FEATURE_COL: int = 1
+const PATH_COL: int = 2
 
-const TREE_ITEM_DRAG_ID = "Resource Remap Tree Item"
+const TREE_ITEM_DRAG_ID: String = "Resource Remap Tree Item"
 
 var undo_redo: EditorUndoRedoManager
 
@@ -86,6 +86,7 @@ func _init() -> void:
 
 	_save_timer = Timer.new()
 	_save_timer.wait_time = 1.5 # Matching ProjectSettingsEditor behaviour
+	@warning_ignore("return_value_discarded")
 	_save_timer.timeout.connect(ProjectSettings.save)
 	_save_timer.one_shot = true
 	add_child(_save_timer)
@@ -103,11 +104,13 @@ func _init() -> void:
 	l.text = TTR("Resources:")
 	l.theme_type_variation = "HeaderSmall"
 	thb.add_child(l)
+	@warning_ignore("return_value_discarded")
 	thb.add_spacer(false)
 	tvb.add_child(thb)
 
 	var addtr: Button = Button.new()
 	addtr.text = TTR("Add...")
+	@warning_ignore("return_value_discarded")
 	addtr.pressed.connect(_res_remap_file_open)
 	thb.add_child(addtr)
 
@@ -117,12 +120,15 @@ func _init() -> void:
 
 	_res_remap = Tree.new()
 	_res_remap.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	@warning_ignore("return_value_discarded")
 	_res_remap.cell_selected.connect(_res_remap_select)
+	@warning_ignore("return_value_discarded")
 	_res_remap.button_clicked.connect(_res_remap_delete)
 	tmc.add_child(_res_remap)
 
 	_res_remap_file_open_dialog = EditorFileDialog.new()
 	_res_remap_file_open_dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILES
+	@warning_ignore("return_value_discarded")
 	_res_remap_file_open_dialog.files_selected.connect(_res_remap_add)
 	add_child(_res_remap_file_open_dialog)
 
@@ -133,11 +139,13 @@ func _init() -> void:
 	l.mouse_filter = Control.MOUSE_FILTER_PASS
 	l.theme_type_variation = "HeaderSmall"
 	thb.add_child(l)
+	@warning_ignore("return_value_discarded")
 	thb.add_spacer(false)
 	tvb.add_child(thb)
 
 	addtr = Button.new()
 	addtr.text = TTR("Add...")
+	@warning_ignore("return_value_discarded")
 	addtr.pressed.connect(_res_remap_option_file_open)
 	_res_remap_option_add_button = addtr
 	thb.add_child(addtr)
@@ -161,13 +169,17 @@ func _init() -> void:
 	_res_remap_options.set_column_expand(HANDLE_COL, false)
 	_res_remap_options.set_column_clip_content(HANDLE_COL, false)
 	_res_remap_options.set_column_custom_minimum_width(HANDLE_COL, int(EditorInterface.get_base_control().get_theme_icon(&"TripleBar", &"EditorIcons").get_size().x) + 32)
+	@warning_ignore("return_value_discarded")
 	_res_remap_options.item_edited.connect(_res_remap_option_changed)
+	@warning_ignore("return_value_discarded")
 	_res_remap_options.button_clicked.connect(_res_remap_option_delete)
+	@warning_ignore("return_value_discarded")
 	_res_remap_options.tree_items_reordered.connect(_res_remap_option_reorderd)
 	tmc.add_child(_res_remap_options)
 
 	_res_remap_option_file_open_dialog = EditorFileDialog.new()
 	_res_remap_option_file_open_dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILES
+	@warning_ignore("return_value_discarded")
 	_res_remap_option_file_open_dialog.files_selected.connect(_res_remap_option_add)
 	add_child(_res_remap_option_file_open_dialog)
 
@@ -185,6 +197,7 @@ func _notification(p_what: int) -> void:
 
 
 func _enter_tree() -> void:
+	@warning_ignore("return_value_discarded")
 	EditorInterface.get_file_system_dock().files_moved.connect(_filesystem_files_moved)
 
 	_res_remap_file_open_dialog.clear_filters()
@@ -281,7 +294,7 @@ func update_res_remaps() -> void:
 				_res_remap_option_file_open_dialog.add_filter("*." + key.get_extension())
 
 				var selected: Array[PackedStringArray] = remaps[key]
-				for j in range(selected.size()):
+				for j: int in range(selected.size()):
 					var s2: PackedStringArray = selected[j]
 					var feature: String = s2[0]
 					var path: String = s2[1]
@@ -337,7 +350,7 @@ func TTR(text: String) -> String:
 
 static func get_features_range_string(features: PackedStringArray) -> String:
 	var features_str: String = ""
-	for feat in features:
+	for feat: String in features:
 		features_str += feat + ","
 	return features_str.substr(0, features_str.length() - 1)
 
@@ -364,7 +377,7 @@ func _res_remap_add(p_paths: PackedStringArray) -> void:
 			prev_remaps = (setting as Dictionary).duplicate(true)
 
 	var added_new_path: bool = false
-	for path in p_paths:
+	for path: String in p_paths:
 		if !remaps.has(path):
 			# Don't overwrite with an empty remap array if an array already exists for the given path.
 			var new_array: Array[PackedStringArray]
@@ -409,9 +422,11 @@ func _res_remap_option_add(p_paths: PackedStringArray) -> void:
 		return
 
 	var r: Array[PackedStringArray] = remaps[key]
-	for path in p_paths:
+	for path: String in p_paths:
 		var remap_array: PackedStringArray
+		@warning_ignore("return_value_discarded")
 		remap_array.append("(not configured)")
+		@warning_ignore("return_value_discarded")
 		remap_array.append(path)
 		r.append(remap_array)
 	remaps[key] = r
@@ -500,6 +515,7 @@ func _res_remap_delete(p_item: Object, _p_column: int, _p_button: int, p_mouse_b
 	if !remaps.has(key):
 		return
 
+	@warning_ignore("return_value_discarded")
 	remaps.erase(key)
 
 	undo_redo.create_action(TTR("Resource Remaps: Remove path %s") % key)
@@ -585,8 +601,9 @@ func _res_remap_option_reorderd(_item: TreeItem, _relative_to: TreeItem, _before
 		var ti: TreeItem = root.get_child(i)
 		ti.set_metadata(HANDLE_COL, i)
 		var this_remap: PackedStringArray
+		@warning_ignore("return_value_discarded")
 		this_remap.push_back(get_selected_feature_from_rage(ti))
-		@warning_ignore("unsafe_cast")
+		@warning_ignore("unsafe_cast", "return_value_discarded")
 		this_remap.push_back(ti.get_metadata(PATH_COL) as String)
 		r.push_back(this_remap)
 	remaps[key] = r
@@ -609,6 +626,7 @@ func _filesystem_files_moved(p_old_file: String, p_new_file: String) -> void:
 	# Check for the keys.
 	if remaps.has(p_old_file):
 		var remapped_files: Array[PackedStringArray] = remaps[p_old_file]
+		@warning_ignore("unsafe_cast", "return_value_discarded")
 		remaps.erase(p_old_file)
 		remaps[p_new_file] = remapped_files
 		remaps_changed = true
@@ -616,11 +634,11 @@ func _filesystem_files_moved(p_old_file: String, p_new_file: String) -> void:
 
 	# Check for the Array elements of the values.
 	var remap_keys: Array = remaps.keys()
-	for i in range(remap_keys.size()):
+	for i: int in range(remap_keys.size()):
 		var remapped_files: Array[PackedStringArray] = remaps[remap_keys[i]]
 		var remapped_files_updated: bool = false
 
-		for j in range(remapped_files.size()):
+		for j: int in range(remapped_files.size()):
 			var res_path: String = remapped_files[j][1]
 
 			if res_path == p_old_file:
@@ -648,6 +666,7 @@ func _undo_redo_callback() -> void:
 
 func _add_string_if_new(value: String, psa: PackedStringArray) -> void:
 	if !psa.has(value):
+		@warning_ignore("unsafe_cast", "return_value_discarded")
 		psa.append(value)
 
 

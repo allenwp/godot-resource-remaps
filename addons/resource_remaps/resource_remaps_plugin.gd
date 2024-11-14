@@ -23,7 +23,7 @@
 @tool
 extends EditorPlugin
 
-const CONTROL_CONTAINER = CONTAINER_PROJECT_SETTING_TAB_RIGHT
+const CONTROL_CONTAINER: CustomControlContainer = CONTAINER_PROJECT_SETTING_TAB_RIGHT
 var _control: ResourceRemapControl
 var _export_plugin: ResourceRemapPlugin
 
