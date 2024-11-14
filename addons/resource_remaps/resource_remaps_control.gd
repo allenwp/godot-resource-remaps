@@ -626,7 +626,7 @@ func _filesystem_files_moved(p_old_file: String, p_new_file: String) -> void:
 	# Check for the keys.
 	if remaps.has(p_old_file):
 		var remapped_files: Array[PackedStringArray] = remaps[p_old_file]
-		@warning_ignore("unsafe_cast", "return_value_discarded")
+		@warning_ignore("return_value_discarded")
 		remaps.erase(p_old_file)
 		remaps[p_new_file] = remapped_files
 		remaps_changed = true
@@ -666,7 +666,7 @@ func _undo_redo_callback() -> void:
 
 func _add_string_if_new(value: String, psa: PackedStringArray) -> void:
 	if !psa.has(value):
-		@warning_ignore("unsafe_cast", "return_value_discarded")
+		@warning_ignore("return_value_discarded")
 		psa.append(value)
 
 
