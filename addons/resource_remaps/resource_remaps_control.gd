@@ -63,7 +63,7 @@ const HANDLE_COL: int = 0
 const FEATURE_COL: int = 1
 const PATH_COL: int = 2
 
-const TREE_ITEM_DRAG_ID: String = "Resource Remap Tree Item"
+const TREE_ITEM_DRAG_ID: StringName = &"Resource Remap Tree Item"
 
 var undo_redo: EditorUndoRedoManager
 
