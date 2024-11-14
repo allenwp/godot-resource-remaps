@@ -55,15 +55,15 @@
 class_name ResourceRemapControl
 extends VBoxContainer
 
-const PROJECT_SETTINGS_PROPERTY = &"resource_remaps"
-const UPDATE_METHOD_STR = &"update_res_remaps"
-const UNDO_REDO_METHOD_STR = &"_undo_redo_callback"
+const PROJECT_SETTINGS_PROPERTY: StringName = &"resource_remaps"
+const UPDATE_METHOD_STR: StringName = &"update_res_remaps"
+const UNDO_REDO_METHOD_STR: StringName = &"_undo_redo_callback"
 
-const HANDLE_COL = 0
-const FEATURE_COL = 1
-const PATH_COL = 2
+const HANDLE_COL: int = 0
+const FEATURE_COL: int = 1
+const PATH_COL: int = 2
 
-const TREE_ITEM_DRAG_ID = "Resource Remap Tree Item"
+const TREE_ITEM_DRAG_ID: String = "Resource Remap Tree Item"
 
 var undo_redo: EditorUndoRedoManager
 
@@ -281,7 +281,7 @@ func update_res_remaps() -> void:
 				_res_remap_option_file_open_dialog.add_filter("*." + key.get_extension())
 
 				var selected: Array[PackedStringArray] = remaps[key]
-				for j in range(selected.size()):
+				for j: int in range(selected.size()):
 					var s2: PackedStringArray = selected[j]
 					var feature: String = s2[0]
 					var path: String = s2[1]
@@ -337,7 +337,7 @@ func TTR(text: String) -> String:
 
 static func get_features_range_string(features: PackedStringArray) -> String:
 	var features_str: String = ""
-	for feat in features:
+	for feat: String in features:
 		features_str += feat + ","
 	return features_str.substr(0, features_str.length() - 1)
 
@@ -364,7 +364,7 @@ func _res_remap_add(p_paths: PackedStringArray) -> void:
 			prev_remaps = (setting as Dictionary).duplicate(true)
 
 	var added_new_path: bool = false
-	for path in p_paths:
+	for path: String in p_paths:
 		if !remaps.has(path):
 			# Don't overwrite with an empty remap array if an array already exists for the given path.
 			var new_array: Array[PackedStringArray]
@@ -409,7 +409,7 @@ func _res_remap_option_add(p_paths: PackedStringArray) -> void:
 		return
 
 	var r: Array[PackedStringArray] = remaps[key]
-	for path in p_paths:
+	for path: String in p_paths:
 		var remap_array: PackedStringArray
 		remap_array.append("(not configured)")
 		remap_array.append(path)
@@ -616,11 +616,11 @@ func _filesystem_files_moved(p_old_file: String, p_new_file: String) -> void:
 
 	# Check for the Array elements of the values.
 	var remap_keys: Array = remaps.keys()
-	for i in range(remap_keys.size()):
+	for i: int in range(remap_keys.size()):
 		var remapped_files: Array[PackedStringArray] = remaps[remap_keys[i]]
 		var remapped_files_updated: bool = false
 
-		for j in range(remapped_files.size()):
+		for j: int in range(remapped_files.size()):
 			var res_path: String = remapped_files[j][1]
 
 			if res_path == p_old_file:
